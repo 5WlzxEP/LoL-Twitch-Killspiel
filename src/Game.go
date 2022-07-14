@@ -28,6 +28,7 @@ type Config struct {
 	Lolaccountname string `json:"Lolaccountname"`
 	Lolapikey      string `json:"Lolapikey"`
 	Joinmessage    bool   `json:"Joinmessage"`
+	Logpath        string `json:"LogPath"`
 	State          Gamestate
 	TwitchClient   *twitch.Client
 }
@@ -96,8 +97,20 @@ func StarteWette() {
 	daten = make(map[string]int)
 	time.Sleep(wettdauer * time.Second)
 	config.State = Spielphase
-	config.TwitchClient.Say(config.Twitchchannel, fmt.Sprintf("/announce  Killspiel-Teilnahme beendet, es haben %d Personen teilgenommen.", len(daten)))
 
+	var text string
+	switch len(daten) {
+	case 0:
+		text = "hat keine"
+	case 1:
+		text = "hat eine"
+	default:
+		text = fmt.Sprintf("haben %d", len(daten))
+	}
+
+	config.TwitchClient.Say(config.Twitchchannel, fmt.Sprintf("/announce Killspiel-Teilnahme beendet, es %s Personen teilgenommen.", text))
+
+	// Umformatierung der Daten für eine bessere Auswertung
 	for player, points := range daten {
 		bessereDaten[points] = append(bessereDaten[points], player)
 	}
@@ -117,46 +130,62 @@ func Auswertung() {
 		}
 	}
 	if ind == 11 {
-		log.Fatal("player not found in result")
-	}
-
-	if killd.Info.Participants[ind].TeamEarlySurrendered || killd.Info.Participants[(ind+5)%10].TeamEarlySurrendered {
-		config.TwitchClient.Say(config.Twitchchannel, "/announce Killspiel wurde abgebrochen, da Remaked wurde.")
+		log.Println("player not found in result")
+		//log.Fatal("player not found in result")
 	} else {
-		kills := killd.Info.Participants[ind].Kills
-		gewinner := bessereDaten[kills]
-		res := result{Kills: kills, Teilnehmer: Teilnehmer{Gewinner: make([]Teilnehmer2, len(gewinner)), Verlierer: make([]Teilnehmer2, 0)}}
-		for i, g := range gewinner {
-			res.Teilnehmer.Gewinner[i] = Teilnehmer2{Name: g, Tipp: kills}
-		}
-		for k, l := range bessereDaten {
-			if k == kills {
-				continue
+
+		if killd.Info.Participants[ind].TeamEarlySurrendered || killd.Info.Participants[(ind+5)%10].TeamEarlySurrendered {
+			config.TwitchClient.Say(config.Twitchchannel, "/announce Killspiel wurde abgebrochen, da Remaked wurde.")
+		} else {
+			kills := killd.Info.Participants[ind].Kills
+			gewinner := bessereDaten[kills]
+			res := result{Kills: kills, Teilnehmer: Teilnehmer{Gewinner: make([]Teilnehmer2, len(gewinner)), Verlierer: make([]Teilnehmer2, 0)}}
+			for i, g := range gewinner {
+				res.Teilnehmer.Gewinner[i] = Teilnehmer2{Name: g, Tipp: kills}
 			}
-			for _, i := range l {
-				res.Teilnehmer.Verlierer = append(res.Teilnehmer.Verlierer, Teilnehmer2{Name: i, Tipp: k})
+			for k, l := range bessereDaten {
+				if k == kills {
+					continue
+				}
+				for _, i := range l {
+					res.Teilnehmer.Verlierer = append(res.Teilnehmer.Verlierer, Teilnehmer2{Name: i, Tipp: k})
+				}
 			}
-		}
 
-		fileInfo, err := os.Stat("results")
-		if err != nil || !fileInfo.IsDir() {
-			//log.Fatal(err)
-			os.Mkdir("results", 0750)
-		}
+			fileInfo, err := os.Stat("results")
+			if err != nil || !fileInfo.IsDir() {
+				//log.Fatal(err)
+				err = os.Mkdir("results", 0750)
+				if err != nil {
+					log.Print("Could not create dir.")
+				}
+			}
 
-		file, err := os.Create(fmt.Sprintf("results/%d.json", aktuellesGame.matchId))
-		if err != nil {
-			log.Fatal(err)
-		}
-		bites, err := json.MarshalIndent(res, "", "  ")
-		if err != nil {
-			log.Fatal(err)
-		}
-		file.Write(bites)
+			file, err := os.Create(fmt.Sprintf("results/%d.json", aktuellesGame.matchId))
+			if err != nil {
+				log.Fatal(err)
+			}
+			bites, err := json.MarshalIndent(res, "", "  ")
+			if err != nil {
+				log.Fatal(err)
+			}
+			file.Write(bites)
 
-		config.TwitchClient.Say(config.Twitchchannel,
-			fmt.Sprintf("/announce Killspiel wurde beendet. %s hat %d gemacht. %s haben die richtige Killanzahl getippt.",
-				config.Lolaccountname, kills, strings.Join(gewinner, ", ")))
+			var haben string
+			switch len(gewinner) {
+			case 1:
+				haben = "hat"
+			case 0:
+				haben = "Keiner hat"
+			default:
+				haben = "haben"
+
+			}
+
+			config.TwitchClient.Say(config.Twitchchannel,
+				fmt.Sprintf("/announce Killspiel wurde beendet. %s hat %d gemacht. %s %s die richtige Killanzahl getippt.",
+					config.Lolaccountname, kills, strings.Join(gewinner, ", "), haben))
+		}
 	}
 	daten = make(map[string]int)
 	bessereDaten = map[int][]string{}
