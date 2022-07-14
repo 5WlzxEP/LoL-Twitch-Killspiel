@@ -1,0 +1,73 @@
+{
+  "Kills": 4,
+  "Teilnehmer": {
+    "Gewinner": [
+      {
+        "Name": "w0",
+        "Tipp": 4
+      },
+      {
+        "Name": "w1",
+        "Tipp": 4
+      },
+      {
+        "Name": "w2",
+        "Tipp": 4
+      }
+    ],
+    "Verlierer": [
+      {
+        "Name": "l10",
+        "Tipp": 1
+      },
+      {
+        "Name": "l11",
+        "Tipp": 1
+      },
+      {
+        "Name": "l12",
+        "Tipp": 1
+      },
+      {
+        "Name": "l20",
+        "Tipp": 2
+      },
+      {
+        "Name": "l30",
+        "Tipp": 3
+      },
+      {
+        "Name": "l31",
+        "Tipp": 3
+      },
+      {
+        "Name": "l32",
+        "Tipp": 3
+      },
+      {
+        "Name": "l33",
+        "Tipp": 3
+      },
+      {
+        "Name": "l34",
+        "Tipp": 3
+      },
+      {
+        "Name": "l35",
+        "Tipp": 3
+      },
+      {
+        "Name": "l00",
+        "Tipp": 0
+      },
+      {
+        "Name": "l01",
+        "Tipp": 0
+      },
+      {
+        "Name": "l02",
+        "Tipp": 0
+      }
+    ]
+  }
+}
