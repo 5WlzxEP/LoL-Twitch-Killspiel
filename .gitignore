@@ -17,3 +17,4 @@
 # vendor/
 Test/
 */.idea/
+src/build/*
