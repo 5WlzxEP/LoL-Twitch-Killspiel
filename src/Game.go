@@ -29,6 +29,7 @@ type Config struct {
 	Lolapikey      string `json:"Lolapikey"`
 	Joinmessage    bool   `json:"Joinmessage"`
 	Logpath        string `json:"LogPath"`
+	Prefix         string `json:"Prefix"`
 	State          Gamestate
 	TwitchClient   *twitch.Client
 }
@@ -94,7 +95,7 @@ func Message(messagechan chan twitch.PrivateMessage) {
 func StarteWette() {
 	log.Println("Starte Wettphase")
 	config.State = Wettphase
-	config.TwitchClient.Say(config.Twitchchannel, "/announce  Killspiel hat begonnen, nimm mit '!vote [Zahl]' teil.")
+	config.TwitchClient.Say(config.Twitchchannel, config.Prefix+" Killspiel hat begonnen, nimm mit '!vote [Zahl]' teil.")
 	daten = make(map[string]int)
 	time.Sleep(wettdauer * time.Second)
 	config.State = Spielphase
@@ -109,7 +110,7 @@ func StarteWette() {
 		text = fmt.Sprintf("haben %d", len(daten))
 	}
 	log.Printf("Wettphase angeschloßen, %d Teilnehmer", len(daten))
-	config.TwitchClient.Say(config.Twitchchannel, fmt.Sprintf("/announce Killspiel-Teilnahme beendet, es %s Personen teilgenommen.", text))
+	config.TwitchClient.Say(config.Twitchchannel, fmt.Sprintf("%s Killspiel-Teilnahme beendet, es %s Personen teilgenommen.", config.Prefix, text))
 
 	// Umformatierung der Daten für eine bessere Auswertung
 	for player, points := range daten {
@@ -138,7 +139,7 @@ func Auswertung() {
 
 		if killd.Info.Participants[ind].TeamEarlySurrendered || killd.Info.Participants[(ind+5)%10].TeamEarlySurrendered {
 			log.Println("Auswertung abgebrochen, da geremaked wurde.")
-			config.TwitchClient.Say(config.Twitchchannel, "/announce Killspiel wurde abgebrochen, da Remaked wurde.")
+			config.TwitchClient.Say(config.Twitchchannel, config.Prefix+" Killspiel wurde abgebrochen, da Remaked wurde.")
 		} else {
 			kills := killd.Info.Participants[ind].Kills
 			gewinner := bessereDaten[kills]
@@ -187,8 +188,8 @@ func Auswertung() {
 			}
 
 			config.TwitchClient.Say(config.Twitchchannel,
-				fmt.Sprintf("/announce Killspiel wurde beendet. %s hat %d gemacht. %s %s die richtige Killanzahl getippt.",
-					config.Lolaccountname, kills, strings.Join(gewinner, ", "), haben))
+				fmt.Sprintf("%s Killspiel wurde beendet. %s hat %d gemacht. %s %s die richtige Killanzahl getippt.",
+					config.Prefix, config.Lolaccountname, kills, strings.Join(gewinner, ", "), haben))
 		}
 	}
 	daten = make(map[string]int)
