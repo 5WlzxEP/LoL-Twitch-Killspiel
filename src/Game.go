@@ -92,6 +92,7 @@ func Message(messagechan chan twitch.PrivateMessage) {
 }
 
 func StarteWette() {
+	log.Println("Starte Wettphase")
 	config.State = Wettphase
 	config.TwitchClient.Say(config.Twitchchannel, "/announce  Killspiel hat begonnen, nimm mit '!vote [Zahl]' teil.")
 	daten = make(map[string]int)
@@ -107,7 +108,7 @@ func StarteWette() {
 	default:
 		text = fmt.Sprintf("haben %d", len(daten))
 	}
-
+	log.Printf("Wettphase angeschloßen, %d Teilnehmer", len(daten))
 	config.TwitchClient.Say(config.Twitchchannel, fmt.Sprintf("/announce Killspiel-Teilnahme beendet, es %s Personen teilgenommen.", text))
 
 	// Umformatierung der Daten für eine bessere Auswertung
@@ -117,6 +118,7 @@ func StarteWette() {
 }
 
 func Auswertung() {
+	log.Println("Starte Auswertungsphase")
 	config.State = Auswertungsphase
 	killd := GetKills()
 	//log.Println(killd)
@@ -135,6 +137,7 @@ func Auswertung() {
 	} else {
 
 		if killd.Info.Participants[ind].TeamEarlySurrendered || killd.Info.Participants[(ind+5)%10].TeamEarlySurrendered {
+			log.Println("Auswertung abgebrochen, da geremaked wurde.")
 			config.TwitchClient.Say(config.Twitchchannel, "/announce Killspiel wurde abgebrochen, da Remaked wurde.")
 		} else {
 			kills := killd.Info.Participants[ind].Kills
@@ -170,6 +173,7 @@ func Auswertung() {
 				log.Fatal(err)
 			}
 			file.Write(bites)
+			log.Printf("Ergebnis gespeichert in results/%d.json", aktuellesGame.matchId)
 
 			var haben string
 			switch len(gewinner) {

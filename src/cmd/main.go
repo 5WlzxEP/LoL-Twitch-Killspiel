@@ -18,6 +18,8 @@ func main() {
 	}
 	defer f.Close()
 	log.SetOutput(f)
+	log.Println("Starting...")
+
 	config.State = Killspiel.Idle
 	Killspiel.SetConfig(config)
 
@@ -35,6 +37,7 @@ func main() {
 
 	config.TwitchClient.Join(config.Twitchchannel)
 	if config.Joinmessage {
+		log.Println("Sending Joinmessage")
 		config.TwitchClient.Say(config.Twitchchannel, "Killspielbot aktiv")
 	}
 
