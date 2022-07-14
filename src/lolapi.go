@@ -70,8 +70,8 @@ func Statecontroll(lolid string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		defer res.Body.Close()
 		bites, _ := ioutil.ReadAll(res.Body)
+		res.Body.Close()
 		sp := &spectatorStruct{}
 		json.Unmarshal(bites, sp)
 		switch config.State {
