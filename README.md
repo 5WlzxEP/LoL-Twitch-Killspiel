@@ -55,8 +55,6 @@ go build cmd/main.go
 | LogPath        | Pfad der Log-Datei, ./ ist das aktuelle Verzeichnis                                                                                             |
 | TwitchPrefix   | Prefix der Beginn, Ende und Auswertungsnachricht. Achtung kann Twitchkommands ausführen, wie z.B. "/announce", "/me", aber auch "/ban 5W_lzxEP" |
 
----
-
 ## Beschaffung der API-Token
 
 ### OAuth
