@@ -29,7 +29,7 @@ type Config struct {
 	Lolapikey      string `json:"Lolapikey"`
 	Joinmessage    bool   `json:"Joinmessage"`
 	Logpath        string `json:"LogPath"`
-	Prefix         string `json:"Prefix"`
+	Prefix         string `json:"TwitchPrefix"`
 	State          Gamestate
 	TwitchClient   *twitch.Client
 }
@@ -105,12 +105,12 @@ func StarteWette() {
 	case 0:
 		text = "hat keine"
 	case 1:
-		text = "hat eine"
+		text = "hat eine Person"
 	default:
-		text = fmt.Sprintf("haben %d", len(daten))
+		text = fmt.Sprintf("haben %d Personen", len(daten))
 	}
 	log.Printf("Wettphase angeschloßen, %d Teilnehmer", len(daten))
-	config.TwitchClient.Say(config.Twitchchannel, fmt.Sprintf("%s Killspiel-Teilnahme beendet, es %s Personen teilgenommen.", config.Prefix, text))
+	config.TwitchClient.Say(config.Twitchchannel, fmt.Sprintf("%s Killspiel-Teilnahme beendet, es %s teilgenommen.", config.Prefix, text))
 
 	// Umformatierung der Daten für eine bessere Auswertung
 	for player, points := range daten {
