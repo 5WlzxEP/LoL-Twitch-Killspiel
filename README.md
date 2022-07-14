@@ -1,3 +1,9 @@
+<style>
+    th, td {
+        border: none;
+    }
+</style>
+
 # LoL-Twitch-Killspiel
 
 Automatisierung, um im Twitchchat das *Killspiel* spielen zu können.  
@@ -25,17 +31,32 @@ go build cmd/main.go
 
 ```json
 {
-    "Username": "5w_lzxep", // Nutzername für Twitch, muss Moderator sein, da /announce nutzt 
-    "Oath": "oauth:bcgf6ogc6svu319nmeqprjgdtdizgw", // Twitch Auth Token
-    "Wettdauer": 120, // Sekunden, die der Chat Zeit hat abzustimmen
-    "Twitchchannel": "5w_lzxep", // Twitchchannel, auf dem die Nachrichten kommen und die Votes ausgelesen werden
+    "Username": "5w_lzxep", 
+    "Oath": "oauth:bcgf6ogc6svu319nmeqprjgdtdizgw", 
+    "Wettdauer": 120, 
+    "Twitchchannel": "5w_lzxep", 
     "Lolaccountname": "5w_lzxep", 
-    "Lolapikey": "9os9f-cm5wf8rs-akq5-xrqh-is5p-4skbgcv1ekjg", // LoL api zugang
-    "Joinmessage": true // Ob eine Nachricht geschickt werden soll, wenn der Bot verbunden ist.
+    "Lolapikey": "9os9f-cm5wf8rs-akq5-xrqh-is5p-4skbgcv1ekjg", 
+    "Joinmessage": true, 
+    "LogPath": "./", 
+    "TwitchPrefix": "/announce" 
 }
 ```
 
+Username | Nutzername für Twitch. Muss Moderator sein, wenn /announce o.ä. genutzt werden soll.
+OAuth | Twitch Auth Token
+Wettdauer | Sekunden, die der Chat Zeit hat abzustimmen
+Twitchchannel | Twitchchannel, auf dem die Nachrichten kommen und die Votes ausgelesen werden
+Lolaccountname | Accountname der getrackt wird
+Lolapikey | LoL api zugang
+Joinmessage | Ob eine Nachricht geschickt werden soll, wenn der Bot verbunden ist.
+LogPath | Pfad der Log-Datei, ./ ist das aktuelle Verzeichnis
+TwitchPrefix | Prefix der Beginn, Ende und Auswertungsnachricht. Achtung kann Twitchkommands ausführen, wie z.B. "/announce", "/me", aber auch "/ban 5W_lzxEP"
+
+
 ---
+
+## Beschaffung der API-Token
 
 ### OAuth
 
