@@ -12,8 +12,8 @@ Das *Killspiel* besteht daraus, dass zu Beginn eines League of Legends Spieles d
 Dazu wird zum Beginn eines Spieles (bis zu 2 min später) die Wettphase automatisch gestartet.
 ![Beispiel Beginn vom Spiel](img/Beginn.png)  
 In der Zeit, die in der [config](#config) geändert werden, können die Chatteilnehmer mit ` !vote [Zahl] `, als z.B. `!vote 5` abstimmen, wenn sie denken, der Streamer erzielt 5 Kills.  
-![Beispeil !vote](img/vote%20example.png)  
-Spieler können innerhalb der Zeit beliebig oft anstimmen, nur der letzte Vote zählt. Nach der Zeit wird das Spiel automatisch beendet. Dies wird im Chat bekanntgegeben und die Anzahl an Teilnehmern bekanntgegeben.  
+![Beispiel !vote](img/vote%20example.png)  
+Spieler können innerhalb der Zeit beliebig oft anstimmen, nur der letzte Vote zählt. Nach der Zeit wird das Spiel automatisch beendet. Dies wird im Chat bekannt gegeben und die Anzahl an Teilnehmern bekannt gegeben.  
 ![](img/Ende%20Wettphase.png)  
 Nach dem LoL Spiel wird die Anzahl an erzielten Kills automatisch aus der League-Api besorgt und die Spieler, die richtig getippt haben werden im Chat ausgegeben. Zudem wird eine Json-Datei mit allen Teilnehmern und ihren Tipps in einen *results*-Ordner gespeichert.  
 ![Beispiel Ende](img/Ende.png)
@@ -64,4 +64,4 @@ Entweder über [Twitch](https://dev.twitch.tv/docs/authentication/getting-tokens
 
 Über [Riot](https://developer.riotgames.com/)
 - Developer Key. Dieser ist jedoch nur 24h nutzbar
-- Register Product -> *Personal API Key* sollte dauerhaften Key liefern. 
+- Register Product &rarr; *Personal API Key* sollte dauerhaften Key liefern. 
