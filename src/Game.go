@@ -188,7 +188,7 @@ func Auswertung() {
 			}
 
 			config.TwitchClient.Say(config.Twitchchannel,
-				fmt.Sprintf("%s Killspiel wurde beendet. %s hat %d gemacht. %s %s die richtige Killanzahl getippt.",
+				fmt.Sprintf("%s Killspiel wurde beendet. %s hat %d Kill(s) gemacht. %s %s die richtige Killanzahl getippt.",
 					config.Prefix, config.Lolaccountname, kills, strings.Join(gewinner, ", "), haben))
 		}
 	}
