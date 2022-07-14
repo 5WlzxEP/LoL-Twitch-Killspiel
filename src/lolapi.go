@@ -35,6 +35,26 @@ type spectatorStruct struct {
 	} `json:"status"`
 }
 
+type killData struct {
+	Metadata struct {
+		MatchId      string   `json:"matchId"`
+		Participants []string `json:"participants"`
+	} `json:"metadata"`
+	Info struct {
+		GameId       int64  `json:"gameId"`
+		GameMode     string `json:"gameMode"`
+		GameType     string `json:"gameType"`
+		Participants []struct {
+			Assists              int  `json:"assists"`
+			Deaths               int  `json:"deaths"`
+			Kills                int  `json:"kills"`
+			ParticipantId        int  `json:"participantId"`
+			TeamEarlySurrendered bool `json:"teamEarlySurrendered"`
+			Win                  bool `json:"win"`
+		} `json:"participants"`
+	} `json:"info"`
+}
+
 type game struct {
 	matchId  int64
 	playerId string
@@ -93,26 +113,6 @@ func lolidToPuuid() string {
 	summ := &summoner{}
 	json.Unmarshal(bites, summ)
 	return summ.Puuid
-}
-
-type killData struct {
-	Metadata struct {
-		MatchId      string   `json:"matchId"`
-		Participants []string `json:"participants"`
-	} `json:"metadata"`
-	Info struct {
-		GameId       int64  `json:"gameId"`
-		GameMode     string `json:"gameMode"`
-		GameType     string `json:"gameType"`
-		Participants []struct {
-			Assists              int  `json:"assists"`
-			Deaths               int  `json:"deaths"`
-			Kills                int  `json:"kills"`
-			ParticipantId        int  `json:"participantId"`
-			TeamEarlySurrendered bool `json:"teamEarlySurrendered"`
-			Win                  bool `json:"win"`
-		} `json:"participants"`
-	} `json:"info"`
 }
 
 func GetKills() *killData {
