@@ -16,8 +16,7 @@ In der Zeit, die in der [config](#config) geändert werden, können die Chatteil
 Spieler können innerhalb der Zeit beliebig oft anstimmen, nur der letzte Vote zählt. Nach der Zeit wird das Spiel automatisch beendet. Dies wird im Chat bekanntgegeben und die Anzahl an Teilnehmern bekanntgegeben.  
 ![](img/Ende%20Wettphase.png)  
 Nach dem LoL Spiel wird die Anzahl an erzielten Kills automatisch aus der League-Api besorgt und die Spieler, die richtig getippt haben werden im Chat ausgegeben. Zudem wird eine Json-Datei mit allen Teilnehmern und ihren Tipps in einen *results*-Ordner gespeichert.  
-![Beispiel Ende](img/Ende.png)  
-<sub>Hier ist keine Auflistung, da nur ein Teilnehmer teilgenommen hat und nicht getroffen hat. Wird in Zukunft vllt noch gefixed.</sub>
+![Beispiel Ende](img/Ende.png)
 
 ## Selber kompilieren
 
