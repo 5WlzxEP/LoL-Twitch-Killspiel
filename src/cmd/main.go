@@ -3,6 +3,7 @@ package main
 import (
 	"Killspiel"
 	"encoding/json"
+	"fmt"
 	"github.com/gempir/go-twitch-irc/v2"
 	"io/ioutil"
 	"log"
@@ -10,8 +11,13 @@ import (
 )
 
 func main() {
-
 	config := getConfig("config.json")
+	f, err := os.OpenFile(config.Logpath+"killspiel.log", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	if err != nil {
+		fmt.Printf("error opening log-file: %v", err)
+	}
+	defer f.Close()
+	log.SetOutput(f)
 	config.State = Killspiel.Idle
 	Killspiel.SetConfig(config)
 
@@ -35,7 +41,7 @@ func main() {
 	//log.Println()
 	go Killspiel.Statecontroll(Killspiel.GetLolID(config.Lolaccountname))
 
-	err := config.TwitchClient.Connect()
+	err = config.TwitchClient.Connect()
 	if err != nil {
 		log.Fatal(err)
 	}
