@@ -144,9 +144,6 @@ func Auswertung() {
 	}
 
 	if ind == 11 {
-		log.Println("player not found in result")
-		//log.Fatal("player not found in result")
-
 		t := make([]Teilnehmer2, len(daten))
 		failed := fail{MatchId: aktuellesGame.matchId, PlayerId: aktuellesGame.playerId, Teilnehmer: t}
 
