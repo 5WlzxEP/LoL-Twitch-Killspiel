@@ -76,15 +76,28 @@ func Statecontroll(lolid string) {
 		json.Unmarshal(bites, sp)
 		switch config.State {
 		case Idle:
-			if sp.GameId != 0 && sp.GameLength < 120 {
-				//*state = Wettphase
+			if sp.GameId != 0 && sp.GameLength < 120 && !config.otp {
 				aktuellesGame.matchId = sp.GameId
 				go StarteWette()
+			} else if sp.GameId != 0 && sp.GameLength < 120 && config.otp {
+				config.State = GameNoTrack
+				for _, participant := range sp.Participants {
+					if participant.SummonerId == aktuellesGame.playerId {
+						if isElementOfArray(*config.champsId, participant.ChampionId) {
+							go StarteWette()
+							break
+						}
+					}
+				}
 			}
 		case Spielphase:
 			if sp.GameId == 0 {
 				//config.State = Auswertungsphase
 				go Auswertung()
+			}
+		case GameNoTrack:
+			if sp.GameId == 0 {
+				config.State = Idle
 			}
 		}
 	}
@@ -126,4 +139,13 @@ func GetKills() *killData {
 	json.Unmarshal(bites, killd)
 	//log.Printf("%v\n", killd)
 	return killd
+}
+
+func isElementOfArray[T comparable](arr []T, ele T) bool {
+	for _, v := range arr {
+		if v == ele {
+			return true
+		}
+	}
+	return false
 }

@@ -11,13 +11,14 @@ import (
 	"time"
 )
 
-type Gamestate int
+type GameState uint16
 
 const (
-	Idle Gamestate = iota
+	Idle GameState = iota
 	Wettphase
 	Spielphase
 	Auswertungsphase
+	GameNoTrack
 )
 
 type Config struct {
@@ -30,23 +31,12 @@ type Config struct {
 	Joinmessage    bool   `json:"Joinmessage"`
 	Logpath        string `json:"LogPath"`
 	Prefix         string `json:"TwitchPrefix"`
-	State          Gamestate
+	otp            bool
+	Champs         *[]string `json:"Champions"`
+	champsId       *[]int
+	State          GameState
 	TwitchClient   *twitch.Client
 }
-
-//type result struct {
-//	Kills      int `json:"Kills"`
-//	Teilnehmer struct {
-//		Gewinnern struct {
-//			Name string `json:"Name"`
-//			Tipp int    `json:"Tipp"`
-//		} `json:"Gewinnern"`
-//		Verlierer struct {
-//			Name string `json:"Name"`
-//			Tipp int    `json:"Tipp"`
-//		} `json:"Verlierer"`
-//	} `json:"Teilnehmer"`
-//}
 
 type result struct {
 	Kills      int        `json:"Kills"`
@@ -69,6 +59,10 @@ var wettdauer time.Duration
 
 func SetConfig(config2 *Config) {
 	config = config2
+	if config.otp = true; len(*config.Champs) == 0 {
+		config.otp = false
+		config.champsId = champNamesToId(config.Champs)
+	}
 	wettdauer = time.Duration(config.Wettdauer)
 	bessereDaten = map[int][]string{}
 	aktuellesGame = &game{}
