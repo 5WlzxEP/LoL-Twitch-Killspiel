@@ -85,6 +85,7 @@ func StateControl(LoLId string) {
 				for _, participant := range sp.Participants {
 					if participant.SummonerId == aktuellesGame.playerId {
 						if isElementOfArray[int](config.champsId, participant.ChampionId) {
+							aktuellesGame.matchId = sp.GameId
 							go StarteWette()
 							break
 						}
