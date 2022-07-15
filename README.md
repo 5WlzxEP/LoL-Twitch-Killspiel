@@ -38,21 +38,23 @@ go build cmd/main.go
     "Lolapikey": "9os9f-cm5wf8rs-akq5-xrqh-is5p-4skbgcv1ekjg", 
     "Joinmessage": true, 
     "LogPath": "./", 
-    "TwitchPrefix": "/announce" 
+    "TwitchPrefix": "/announce",
+    "Champions": ["Nilah", "Belveth", "MissFortune", "Shaco"]
 }
 ```
 
-| Schlüsselwort  | Bedeutung                                                                                                                                       |
-|----------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
-| Username       | Nutzername für Twitch. Muss Moderator sein, wenn /announce o.ä. genutzt werden soll.                                                            |
-| OAuth          | Twitch Auth Token                                                                                                                               |
-| Wettdauer      | Sekunden, die der Chat Zeit hat abzustimmen                                                                                                     |
-| Twitchchannel  | Twitchchannel, auf dem die Nachrichten kommen und die Votes ausgelesen werden                                                                   |
-| Lolaccountname | Accountname der getrackt wird                                                                                                                   |
-| Lolapikey      | LoL api zugang                                                                                                                                  |
-| Joinmessage    | Ob eine Nachricht geschickt werden soll, wenn der Bot verbunden ist.                                                                            |
-| LogPath        | Pfad der Log-Datei, ./ ist das aktuelle Verzeichnis                                                                                             |
-| TwitchPrefix   | Prefix der Beginn, Ende und Auswertungsnachricht. Achtung kann Twitchkommands ausführen, wie z.B. "/announce", "/me", aber auch "/ban 5W_lzxEP" |
+| Schlüsselwort  | Bedeutung                                                                                                                                                                        |
+|----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Username       | Nutzername für Twitch. Muss Moderator sein, wenn /announce o.ä. genutzt werden soll.                                                                                             |
+| OAuth          | Twitch Auth Token                                                                                                                                                                |
+| Wettdauer      | Sekunden, die der Chat Zeit hat abzustimmen                                                                                                                                      |
+| Twitchchannel  | Twitchchannel, auf dem die Nachrichten kommen und die Votes ausgelesen werden                                                                                                    |
+| Lolaccountname | Accountname der getrackt wird                                                                                                                                                    |
+| Lolapikey      | LoL api zugang                                                                                                                                                                   |
+| Joinmessage    | Ob eine Nachricht geschickt werden soll, wenn der Bot verbunden ist.                                                                                                             |
+| LogPath        | Pfad der Log-Datei, ./ ist das aktuelle Verzeichnis                                                                                                                              |
+| TwitchPrefix   | Prefix der Beginn, Ende und Auswertungsnachricht. Achtung kann Twitchkommands ausführen, wie z.B. "/announce", "/me", aber auch "/ban 5W_lzxEP"                                  |
+| Champions      | Liste an Champions, bei denen der Bot triggrt. Falls leer wird jeder Champ akzeptiert.<br/> Champs müssen zusammengeschrieben werden und Satzzeichen wie `'`  oder `.` entfallen |
 
 ## Beschaffung der API-Token
 

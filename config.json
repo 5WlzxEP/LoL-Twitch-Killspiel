@@ -7,5 +7,6 @@
     "Lolapikey": "9os9f-cm5wf8rs-akq5-xrqh-is5p-4skbgcv1ekjg",
     "Joinmessage": true,
     "LogPath": "./",
-    "TwitchPrefix": "/announce"
+    "TwitchPrefix": "/announce",
+    "Champions": []
 }
