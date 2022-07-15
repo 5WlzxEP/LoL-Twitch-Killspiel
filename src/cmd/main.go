@@ -23,8 +23,7 @@ func main() {
 	config.State = Killspiel.Idle
 	Killspiel.SetConfig(config)
 
-	//log.Printf("%v, %v, %s, %s, %v", channel, login, username, oath, err)
-
+	// Init Twitch Client
 	config.TwitchClient = twitch.NewClient(config.Username, config.Oath)
 	c := make(chan twitch.PrivateMessage)
 	go Killspiel.Message(c)
@@ -32,7 +31,6 @@ func main() {
 		if config.State == Killspiel.Wettphase {
 			c <- message
 		}
-		//log.Println(message.Message)
 	})
 
 	config.TwitchClient.Join(config.Twitchchannel)
