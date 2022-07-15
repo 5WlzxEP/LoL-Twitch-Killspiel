@@ -12,7 +12,7 @@ import (
 
 func TestGetKills(t *testing.T) {
 	config = getConfig("config.json")
-	aktuellesGame = &game{matchId: 5967718649, playerId: "yFl1JcuA3BI5kWVh3qLjayIDvn70QNChfzMNP9RC7zfVSs0ltXytPeKIZbzQotj-6CKmP2sKGfHoSA"}
+	aktuellesGame = &game{matchId: 5967718649, playerId: "w-MRk8wehYuoOVertLqVDtHE-7EcMXkDIJ0xxycyvRg5dPU"}
 	expected := &killData{
 		Metadata: struct {
 			MatchId      string   `json:"matchId"`
