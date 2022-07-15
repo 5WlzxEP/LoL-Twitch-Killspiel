@@ -39,7 +39,7 @@ func champNamesToId(names *[]string) *[]int {
 	for i, name := range *names {
 		res[i], err = strconv.Atoi(champions.Data[name].Key)
 		if err != nil {
-			log.Fatal(err)
+			log.Printf("%s konnte nicht als Held gefunden werden, wird ignoriert. Fehler: %v", name, err)
 		}
 	}
 	return &res

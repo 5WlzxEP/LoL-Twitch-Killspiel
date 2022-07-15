@@ -3,6 +3,7 @@ package Killspiel
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -62,18 +63,18 @@ type game struct {
 
 var aktuellesGame *game
 
-func Statecontroll(lolid string) {
+func StateControl(LoLId string) {
 	//log.Println("Updating State")
-	aktuellesGame.playerId = lolid
+	aktuellesGame.playerId = LoLId
 	for ; true; time.Sleep(1 * time.Minute) {
-		res, err := http.Get(fmt.Sprintf("https://euw1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/%s?api_key=%s", lolid, config.Lolapikey))
+		res, err := http.Get(fmt.Sprintf("https://euw1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/%s?api_key=%s", LoLId, config.Lolapikey))
 		if err != nil {
 			log.Fatal(err)
 		}
 		bites, _ := ioutil.ReadAll(res.Body)
-		res.Body.Close()
+		err = res.Body.Close()
 		sp := &spectatorStruct{}
-		json.Unmarshal(bites, sp)
+		err = json.Unmarshal(bites, sp)
 		switch config.State {
 		case Idle:
 			if sp.GameId != 0 && sp.GameLength < 120 && !config.otp {
@@ -83,7 +84,7 @@ func Statecontroll(lolid string) {
 				config.State = GameNoTrack
 				for _, participant := range sp.Participants {
 					if participant.SummonerId == aktuellesGame.playerId {
-						if isElementOfArray(*config.champsId, participant.ChampionId) {
+						if isElementOfArray[int](config.champsId, participant.ChampionId) {
 							go StarteWette()
 							break
 						}
@@ -112,7 +113,7 @@ func GetLolID(lolaccount string) string {
 	defer res.Body.Close()
 	bites, _ := ioutil.ReadAll(res.Body)
 	summ := &summoner{}
-	json.Unmarshal(bites, summ)
+	err = json.Unmarshal(bites, summ)
 	return summ.Id
 }
 
@@ -124,7 +125,7 @@ func lolidToPuuid() string {
 	defer res.Body.Close()
 	bites, _ := ioutil.ReadAll(res.Body)
 	summ := &summoner{}
-	json.Unmarshal(bites, summ)
+	err = json.Unmarshal(bites, summ)
 	return summ.Puuid
 }
 
@@ -133,16 +134,22 @@ func GetKills() *killData {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer res.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}(res.Body)
 	bites, _ := ioutil.ReadAll(res.Body)
-	killd := &killData{}
-	json.Unmarshal(bites, killd)
-	//log.Printf("%v\n", killd)
-	return killd
+	killData := &killData{}
+	err = json.Unmarshal(bites, killData)
+	//log.Printf("%v\n", killData)
+	return killData
 }
 
-func isElementOfArray[T comparable](arr []T, ele T) bool {
-	for _, v := range arr {
+func isElementOfArray[T comparable](arr *[]T, ele T) bool {
+	log.Println(*arr)
+	for _, v := range *arr {
 		if v == ele {
 			return true
 		}

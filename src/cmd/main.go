@@ -42,7 +42,7 @@ func main() {
 	}
 
 	//log.Println()
-	go Killspiel.Statecontroll(Killspiel.GetLolID(config.Lolaccountname))
+	go Killspiel.StateControl(Killspiel.GetLolID(config.Lolaccountname))
 
 	err = config.TwitchClient.Connect()
 	if err != nil {
