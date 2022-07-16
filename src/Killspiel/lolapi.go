@@ -63,7 +63,6 @@ type game struct {
 var aktuellesGame *game
 
 func StateControl(LoLId string) {
-	//log.Println("Updating State")
 	aktuellesGame.playerId = LoLId
 	for ; true; time.Sleep(1 * time.Minute) {
 		res, err := http.Get(fmt.Sprintf("https://euw1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/%s?api_key=%s", LoLId, config.Lolapikey))
@@ -105,7 +104,6 @@ func StateControl(LoLId string) {
 }
 
 func GetLolID(lolaccount string) string {
-	//log.Println("Getting account id")
 	res, err := http.Get(fmt.Sprintf("https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/%s?api_key=%s", lolaccount, config.Lolapikey))
 	if err != nil {
 		log.Fatal(err)
@@ -153,7 +151,6 @@ func GetKills() *killData {
 	bites, _ := io.ReadAll(res.Body)
 	killData := &killData{}
 	err = json.Unmarshal(bites, killData)
-	//log.Printf("%v\n", killData)
 	return killData
 }
 

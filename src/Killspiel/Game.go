@@ -37,28 +37,12 @@ type Config struct {
 	State          GameState
 	TwitchClient   *twitch.Client
 }
-type result2 struct {
+type result struct {
 	MatchId  int64            `json:"matchId"`
 	PlayerId string           `json:"playerId"`
 	Kills    int              `json:"kills"`
 	Tipps    map[int][]string `json:"Tipps"`
 }
-
-//type Teilnehmer struct {
-//	Gewinner  []Teilnehmer2 `json:"Gewinner"`
-//	Verlierer []Teilnehmer2 `json:"Verlierer"`
-//}
-//
-//type Teilnehmer2 struct {
-//	Name string `json:"Name"`
-//	Tipp int    `json:"Tipp"`
-//}
-
-//type fail struct {
-//	Teilnehmer []Teilnehmer2 `json:"teilnehmer"`
-//	MatchId    int64         `json:"matchId"`
-//	PlayerId   string        `json:"playerId"`
-//}
 
 var bessereDaten map[int][]string
 var config *Config
@@ -86,7 +70,6 @@ func Message(messagechan chan twitch.PrivateMessage) {
 				v, err := strconv.Atoi(value)
 				if err == nil {
 					daten[message.User.DisplayName] = v
-					//log.Println(message.User.DisplayName, v)
 				}
 			}
 		}
@@ -124,8 +107,7 @@ func Auswertung() {
 	log.Println("Starte Auswertungsphase")
 	config.State = Auswertungsphase
 	killd := GetKills()
-	//log.Println(killd)
-	//log.Println(aktuellesGame)
+
 	var ind int = 11
 	player := lolidToPuuid()
 	for i := range killd.Metadata.Participants {
@@ -138,7 +120,6 @@ func Auswertung() {
 	// check if dir exist and if not creates it
 	fileInfo, err := os.Stat("results")
 	if err != nil || !fileInfo.IsDir() {
-		//log.Fatal(err)
 		err = os.Mkdir("results", 0750)
 		if err != nil {
 			log.Print("Could not create dir.")
@@ -146,17 +127,7 @@ func Auswertung() {
 	}
 
 	if ind == 11 {
-		//t := make([]Teilnehmer2, len(daten))
-		//failed := fail{MatchId: aktuellesGame.matchId, PlayerId: aktuellesGame.playerId, Teilnehmer: t}
-		res := result2{MatchId: aktuellesGame.matchId, PlayerId: aktuellesGame.playerId, Kills: -1, Tipps: bessereDaten}
-
-		//index := 0
-		//for k, l := range bessereDaten {
-		//	for _, i := range l {
-		//		failed.Teilnehmer[index] = Teilnehmer2{Name: i, Tipp: k}
-		//		index++
-		//	}
-		//}
+		res := result{MatchId: aktuellesGame.matchId, PlayerId: aktuellesGame.playerId, Kills: -1, Tipps: bessereDaten}
 
 		file, err := os.Create(fmt.Sprintf("results/error_%d.json", aktuellesGame.matchId))
 		if err != nil {
@@ -181,19 +152,8 @@ func Auswertung() {
 		} else {
 			kills := killd.Info.Participants[ind].Kills
 			gewinner := bessereDaten[kills]
-			//res := result{Kills: kills, Teilnehmer: Teilnehmer{Gewinner: make([]Teilnehmer2, len(gewinner)), Verlierer: make([]Teilnehmer2, 0)}}
-			//for i, g := range gewinner {
-			//	res.Teilnehmer.Gewinner[i] = Teilnehmer2{Name: g, Tipp: kills}
-			//}
-			//for k, l := range bessereDaten {
-			//	if k == kills {
-			//		continue
-			//	}
-			//	for _, i := range l {
-			//		res.Teilnehmer.Verlierer = append(res.Teilnehmer.Verlierer, Teilnehmer2{Name: i, Tipp: k})
-			//	}
-			//}
-			res := result2{
+
+			res := result{
 				MatchId:  aktuellesGame.matchId,
 				PlayerId: aktuellesGame.playerId,
 				Kills:    kills,

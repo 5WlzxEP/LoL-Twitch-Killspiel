@@ -1,9 +1,9 @@
 package main
 
 import (
-	"Killspiel"
 	"encoding/json"
 	"fmt"
+	"github.com/5WlzxEP/LoL-Twitch-Killspiel/src/Killspiel"
 	"github.com/gempir/go-twitch-irc/v2"
 	"io"
 	"log"
