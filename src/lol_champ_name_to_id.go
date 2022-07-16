@@ -17,7 +17,7 @@ type champion struct {
 	} `json:"data"`
 }
 
-func loadChamps(file string) *champion {
+func loadChamps(file string) *map[string]string {
 	f, err := os.Open(file)
 	if err != nil {
 		log.Fatalf("An error occurred while opening champions.json %v\n", err)
@@ -29,7 +29,14 @@ func loadChamps(file string) *champion {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return champions
+
+	champ := map[string]string{}
+
+	for _, v := range champions.Data {
+		champ[v.Name] = v.Key
+	}
+
+	return &champ
 }
 
 func champNamesToId(names *[]string) *[]int {
@@ -37,7 +44,7 @@ func champNamesToId(names *[]string) *[]int {
 	res := make([]int, len(*names))
 	var err error
 	for i, name := range *names {
-		res[i], err = strconv.Atoi(champions.Data[name].Key)
+		res[i], err = strconv.Atoi((*champions)[name])
 		if err != nil {
 			log.Printf("%s konnte nicht als Held gefunden werden, wird ignoriert. Fehler: %v", name, err)
 		}
