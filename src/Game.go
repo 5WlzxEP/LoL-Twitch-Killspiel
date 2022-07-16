@@ -164,7 +164,7 @@ func Auswertung() {
 			log.Fatal(err)
 		}
 		file.Write(bites)
-		log.Printf("player not found in result. But saved tipps in results/error_%s.json\n", aktuellesGame.matchId)
+		log.Printf("player not found in result. But saved tipps in results/error_%d.json\n", aktuellesGame.matchId)
 
 	} else {
 
