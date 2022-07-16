@@ -30,7 +30,7 @@ go build cmd/main.go
     "Wettdauer": 120, 
     "Twitchchannel": "5w_lzxep", 
     "Lolaccountname": "5w_lzxep", 
-    "Lolapikey": "9os9f-cm5wf8rs-akq5-xrqh-is5p-4skbgcv1ekjg", 
+    "Lolapikey": "RGAPI-cm5wf8rs-akq5-xrqh-is5p-4skbgcv1ekjg", 
     "Joinmessage": true, 
     "LogPath": "./", 
     "TwitchPrefix": "/announce",
