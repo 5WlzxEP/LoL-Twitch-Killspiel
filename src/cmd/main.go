@@ -16,7 +16,12 @@ func main() {
 	if err != nil {
 		fmt.Printf("error opening log-file: %v", err)
 	}
-	defer f.Close()
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+			log.Printf("Error occurded closing log file: %v", err)
+		}
+	}(f)
 	log.SetOutput(f)
 	log.Println("Starting...")
 
@@ -53,7 +58,12 @@ func getConfig(file string) *Killspiel.Config {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+			log.Printf("Error occurded closing config: %v\n", err)
+		}
+	}(f)
 	bites, _ := ioutil.ReadAll(f)
 	conf := &Killspiel.Config{}
 	err = json.Unmarshal(bites, conf)
