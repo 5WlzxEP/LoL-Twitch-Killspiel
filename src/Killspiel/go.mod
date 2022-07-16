@@ -1,4 +1,4 @@
-module Killspiel
+module github.com/5WlzxEP/LoL-Twitch-Killspiel/src/Killspiel
 
 go 1.18
 
