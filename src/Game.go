@@ -233,4 +233,5 @@ func Auswertung() {
 	daten = map[string]int{}
 	bessereDaten = map[int][]string{}
 	config.State = Idle
+	aktuellesGame.matchId = 0
 }
