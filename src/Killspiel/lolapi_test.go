@@ -3,7 +3,7 @@ package Killspiel
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"reflect"
@@ -80,7 +80,7 @@ func getConfig(file string) *Config {
 			log.Printf("Error in Test, probaly no config file. err: %v\n", err)
 		}
 	}(f)
-	bites, _ := ioutil.ReadAll(f)
+	bites, _ := io.ReadAll(f)
 	conf := &Config{}
 	err = json.Unmarshal(bites, conf)
 	if err != nil {
