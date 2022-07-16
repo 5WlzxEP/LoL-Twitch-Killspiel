@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gempir/go-twitch-irc/v2"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 )
@@ -64,7 +64,7 @@ func getConfig(file string) *Killspiel.Config {
 			log.Printf("Error occurded closing config: %v\n", err)
 		}
 	}(f)
-	bites, _ := ioutil.ReadAll(f)
+	bites, _ := io.ReadAll(f)
 	conf := &Killspiel.Config{}
 	err = json.Unmarshal(bites, conf)
 	if err != nil {

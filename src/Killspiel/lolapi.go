@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -71,7 +70,7 @@ func StateControl(LoLId string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		bites, _ := ioutil.ReadAll(res.Body)
+		bites, _ := io.ReadAll(res.Body)
 		err = res.Body.Close()
 		sp := &spectatorStruct{}
 		err = json.Unmarshal(bites, sp)
@@ -111,8 +110,13 @@ func GetLolID(lolaccount string) string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer res.Body.Close()
-	bites, _ := ioutil.ReadAll(res.Body)
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Printf("Error occured closing summoners api response: %v\n", err)
+		}
+	}(res.Body)
+	bites, _ := io.ReadAll(res.Body)
 	summ := &summoner{}
 	err = json.Unmarshal(bites, summ)
 	return summ.Id
@@ -123,8 +127,13 @@ func lolidToPuuid() string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer res.Body.Close()
-	bites, _ := ioutil.ReadAll(res.Body)
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Printf("Error occured closing summoners api response: %v\n", err)
+		}
+	}(res.Body)
+	bites, _ := io.ReadAll(res.Body)
 	summ := &summoner{}
 	err = json.Unmarshal(bites, summ)
 	return summ.Puuid
@@ -141,7 +150,7 @@ func GetKills() *killData {
 			log.Println(err)
 		}
 	}(res.Body)
-	bites, _ := ioutil.ReadAll(res.Body)
+	bites, _ := io.ReadAll(res.Body)
 	killData := &killData{}
 	err = json.Unmarshal(bites, killData)
 	//log.Printf("%v\n", killData)

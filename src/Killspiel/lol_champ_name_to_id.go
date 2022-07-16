@@ -2,7 +2,7 @@ package Killspiel
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"strconv"
@@ -22,8 +22,13 @@ func loadChamps(file string) *map[string]string {
 	if err != nil {
 		log.Fatalf("An error occurred while opening champions.json %v\n", err)
 	}
-	defer f.Close()
-	bites, _ := ioutil.ReadAll(f)
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+			log.Printf("Error occured while closing champions.json: %v\n", err)
+		}
+	}(f)
+	bites, _ := io.ReadAll(f)
 	champions := &champion{}
 	err = json.Unmarshal(bites, champions)
 	if err != nil {
