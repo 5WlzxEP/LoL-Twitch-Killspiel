@@ -37,26 +37,28 @@ type Config struct {
 	State          GameState
 	TwitchClient   *twitch.Client
 }
-
-type result struct {
-	Kills      int        `json:"Kills"`
-	Teilnehmer Teilnehmer `json:"Teilnehmer"`
-}
-type Teilnehmer struct {
-	Gewinner  []Teilnehmer2 `json:"Gewinner"`
-	Verlierer []Teilnehmer2 `json:"Verlierer"`
+type result2 struct {
+	MatchId  int64            `json:"matchId"`
+	PlayerId string           `json:"playerId"`
+	Kills    int              `json:"kills"`
+	Tipps    map[int][]string `json:"Tipps"`
 }
 
-type Teilnehmer2 struct {
-	Name string `json:"Name"`
-	Tipp int    `json:"Tipp"`
-}
+//type Teilnehmer struct {
+//	Gewinner  []Teilnehmer2 `json:"Gewinner"`
+//	Verlierer []Teilnehmer2 `json:"Verlierer"`
+//}
+//
+//type Teilnehmer2 struct {
+//	Name string `json:"Name"`
+//	Tipp int    `json:"Tipp"`
+//}
 
-type fail struct {
-	Teilnehmer []Teilnehmer2 `json:"teilnehmer"`
-	MatchId    int64         `json:"matchId"`
-	PlayerId   string        `json:"playerId"`
-}
+//type fail struct {
+//	Teilnehmer []Teilnehmer2 `json:"teilnehmer"`
+//	MatchId    int64         `json:"matchId"`
+//	PlayerId   string        `json:"playerId"`
+//}
 
 var bessereDaten map[int][]string
 var config *Config
@@ -144,26 +146,30 @@ func Auswertung() {
 	}
 
 	if ind == 11 {
-		t := make([]Teilnehmer2, len(daten))
-		failed := fail{MatchId: aktuellesGame.matchId, PlayerId: aktuellesGame.playerId, Teilnehmer: t}
+		//t := make([]Teilnehmer2, len(daten))
+		//failed := fail{MatchId: aktuellesGame.matchId, PlayerId: aktuellesGame.playerId, Teilnehmer: t}
+		res := result2{MatchId: aktuellesGame.matchId, PlayerId: aktuellesGame.playerId, Kills: -1, Tipps: bessereDaten}
 
-		index := 0
-		for k, l := range bessereDaten {
-			for _, i := range l {
-				failed.Teilnehmer[index] = Teilnehmer2{Name: i, Tipp: k}
-				index++
-			}
-		}
+		//index := 0
+		//for k, l := range bessereDaten {
+		//	for _, i := range l {
+		//		failed.Teilnehmer[index] = Teilnehmer2{Name: i, Tipp: k}
+		//		index++
+		//	}
+		//}
 
 		file, err := os.Create(fmt.Sprintf("results/error_%d.json", aktuellesGame.matchId))
 		if err != nil {
 			log.Fatal(err)
 		}
-		bites, err := json.MarshalIndent(failed, "", "  ")
+		bites, err := json.MarshalIndent(res, "", "  ")
 		if err != nil {
 			log.Fatal(err)
 		}
-		file.Write(bites)
+		_, err = file.Write(bites)
+		if err != nil {
+			log.Printf("Error occurded writing error res: %v\n", err)
+		}
 		log.Printf("player not found in result. But saved tipps in results/error_%d.json\n", aktuellesGame.matchId)
 
 	} else {
@@ -175,17 +181,23 @@ func Auswertung() {
 		} else {
 			kills := killd.Info.Participants[ind].Kills
 			gewinner := bessereDaten[kills]
-			res := result{Kills: kills, Teilnehmer: Teilnehmer{Gewinner: make([]Teilnehmer2, len(gewinner)), Verlierer: make([]Teilnehmer2, 0)}}
-			for i, g := range gewinner {
-				res.Teilnehmer.Gewinner[i] = Teilnehmer2{Name: g, Tipp: kills}
-			}
-			for k, l := range bessereDaten {
-				if k == kills {
-					continue
-				}
-				for _, i := range l {
-					res.Teilnehmer.Verlierer = append(res.Teilnehmer.Verlierer, Teilnehmer2{Name: i, Tipp: k})
-				}
+			//res := result{Kills: kills, Teilnehmer: Teilnehmer{Gewinner: make([]Teilnehmer2, len(gewinner)), Verlierer: make([]Teilnehmer2, 0)}}
+			//for i, g := range gewinner {
+			//	res.Teilnehmer.Gewinner[i] = Teilnehmer2{Name: g, Tipp: kills}
+			//}
+			//for k, l := range bessereDaten {
+			//	if k == kills {
+			//		continue
+			//	}
+			//	for _, i := range l {
+			//		res.Teilnehmer.Verlierer = append(res.Teilnehmer.Verlierer, Teilnehmer2{Name: i, Tipp: k})
+			//	}
+			//}
+			res := result2{
+				MatchId:  aktuellesGame.matchId,
+				PlayerId: aktuellesGame.playerId,
+				Kills:    kills,
+				Tipps:    bessereDaten,
 			}
 
 			file, err := os.Create(fmt.Sprintf("results/%d.json", aktuellesGame.matchId))
@@ -194,9 +206,12 @@ func Auswertung() {
 			}
 			bites, err := json.MarshalIndent(res, "", "  ")
 			if err != nil {
-				log.Fatal(err)
+				log.Printf("Error occurded writing res: %v\n", err)
 			}
-			file.Write(bites)
+			_, err = file.Write(bites)
+			if err != nil {
+				return
+			}
 			log.Printf("Ergebnis gespeichert in results/%d.json\n", aktuellesGame.matchId)
 
 			var haben string

@@ -1,73 +1,33 @@
 {
-  "Kills": 4,
-  "Teilnehmer": {
-    "Gewinner": [
-      {
-        "Name": "w0",
-        "Tipp": 4
-      },
-      {
-        "Name": "w1",
-        "Tipp": 4
-      },
-      {
-        "Name": "w2",
-        "Tipp": 4
-      }
+  "matchId": 5967718649,
+  "playerId": "w-MRk8wehYuoOVertLqVDtHE-7EcMXkDIJ0xxycyvRg5dPU",
+  "kills": 4,
+  "Tipps": {
+    "0": [
+      "l00",
+      "l01",
+      "l02"
     ],
-    "Verlierer": [
-      {
-        "Name": "l10",
-        "Tipp": 1
-      },
-      {
-        "Name": "l11",
-        "Tipp": 1
-      },
-      {
-        "Name": "l12",
-        "Tipp": 1
-      },
-      {
-        "Name": "l20",
-        "Tipp": 2
-      },
-      {
-        "Name": "l30",
-        "Tipp": 3
-      },
-      {
-        "Name": "l31",
-        "Tipp": 3
-      },
-      {
-        "Name": "l32",
-        "Tipp": 3
-      },
-      {
-        "Name": "l33",
-        "Tipp": 3
-      },
-      {
-        "Name": "l34",
-        "Tipp": 3
-      },
-      {
-        "Name": "l35",
-        "Tipp": 3
-      },
-      {
-        "Name": "l00",
-        "Tipp": 0
-      },
-      {
-        "Name": "l01",
-        "Tipp": 0
-      },
-      {
-        "Name": "l02",
-        "Tipp": 0
-      }
+    "1": [
+      "l10",
+      "l11",
+      "l12"
+    ],
+    "2": [
+      "l20"
+    ],
+    "3": [
+      "l30",
+      "l31",
+      "l32",
+      "l33",
+      "l34",
+      "l35"
+    ],
+    "4": [
+      "w0",
+      "w1",
+      "w2"
     ]
   }
 }
