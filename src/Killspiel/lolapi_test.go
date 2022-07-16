@@ -74,7 +74,12 @@ func getConfig(file string) *Config {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer f.Close()
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+			log.Printf("Error in Test, probaly no config file. err: %v\n", err)
+		}
+	}(f)
 	bites, _ := ioutil.ReadAll(f)
 	conf := &Config{}
 	err = json.Unmarshal(bites, conf)
