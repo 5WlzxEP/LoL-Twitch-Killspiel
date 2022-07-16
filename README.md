@@ -13,14 +13,6 @@ Nach dem LoL Spiel wird die Anzahl an erzielten Kills automatisch aus der League
 ![Beispiel Ende](img/Ende.png)  
 ![Ende2](img/Ende2.png)
 
-## Selber kompilieren
-
-[go(lang)](https://go.dev/dl/) installieren
-
-```bash
-go build cmd/main.go
-```
-
 ## config
 
 ```json
@@ -62,3 +54,11 @@ Entweder über [Twitch](https://dev.twitch.tv/docs/authentication/getting-tokens
 Über [Riot](https://developer.riotgames.com/)
 - Developer Key. Dieser ist jedoch nur 24h nutzbar
 - Register Product &rarr; *Personal API Key* sollte dauerhaften Key liefern. 
+
+## Selber kompilieren
+
+[go(lang)](https://go.dev/dl/) installieren
+
+```bash
+go build cmd/main.go
+```
