@@ -12,6 +12,7 @@ Spieler können innerhalb der Zeit beliebig oft anstimmen, nur der letzte Vote z
 Nach dem LoL Spiel wird die Anzahl an erzielten Kills automatisch aus der League-Api besorgt und die Spieler, die richtig getippt haben werden im Chat ausgegeben. Zudem wird eine Json-Datei mit allen Teilnehmern und ihren Tipps in einen *results*-Ordner gespeichert.  
 ![Beispiel Ende](img/Ende.png)  
 ![Ende2](img/Ende2.png)
+![Ende meherere Gewinner](img/Ende%20mehrere%20Gewinner.png)
 
 ## config
 
