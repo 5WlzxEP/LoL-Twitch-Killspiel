@@ -88,7 +88,7 @@ func StarteWette() {
 	var text string
 	switch len(daten) {
 	case 0:
-		text = "hat keine"
+		text = "hat keiner"
 	case 1:
 		text = "hat eine Person"
 	default:
