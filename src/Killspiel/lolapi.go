@@ -73,6 +73,9 @@ func StateControl(LoLId string) {
 		err = res.Body.Close()
 		sp := &spectatorStruct{}
 		err = json.Unmarshal(bites, sp)
+		if sp.Status.StatusCode != 0 {
+			log.Printf("Riot API responded an error: %s\n", sp.Status.Message)
+		}
 		switch config.State {
 		case Idle:
 			if sp.GameId != 0 && sp.GameLength < 120 && !config.otp {
