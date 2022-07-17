@@ -63,3 +63,7 @@ Entweder über [Twitch](https://dev.twitch.tv/docs/authentication/getting-tokens
 ```bash
 go build cmd/main.go
 ```
+
+## Auswertung
+
+Wie man die Daten auswertet, die dabei einstehen, kann man z.B. [hier](src/Auswertung) sehen.
