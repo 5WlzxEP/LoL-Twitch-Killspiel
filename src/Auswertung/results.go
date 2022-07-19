@@ -10,6 +10,7 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"strings"
 	"sync"
 )
 
@@ -65,10 +66,11 @@ func Auswerten() (i int) {
 	var raw []byte
 	var file *os.File
 	var res result
-	var wg sync.WaitGroup
 
 	for _, d := range dir {
 		if d.IsDir() {
+			continue
+		} else if !strings.HasSuffix(d.Name(), ".json") || !(len(d.Name()) == 14 || len(d.Name()) == 15) {
 			continue
 		}
 		file, err = os.Open(path.Join(global.Results, d.Name()))
@@ -82,7 +84,7 @@ func Auswerten() (i int) {
 			log.Printf("cound not parse %s, %v\n", d.Name(), err)
 			continue
 		}
-
+		var wg sync.WaitGroup
 		for kills, players := range res.Tipps {
 			for _, player := range players {
 				wg.Add(1)
@@ -98,8 +100,8 @@ func Auswerten() (i int) {
 			log.Printf("Cloud not remove %s, %v\n", d.Name(), err)
 		}
 		i++
+		wg.Wait()
 	}
-	wg.Wait()
 	return
 }
 
