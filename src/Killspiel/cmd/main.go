@@ -80,38 +80,30 @@ func getConfig(file string) (*Killspiel.Config, *[]string, bool) {
 	}
 	var confFehler []string
 	var confFehlerKrit bool
-	if conf.Logpath == "" {
-		log.Fatalln("Logpath can't be empty")
-	}
+
 	if conf.Oath == "" {
-		//log.Fatalln("OAuth can't be empty")
 		confFehler = append(confFehler, "OAuth can't be empty")
 		confFehlerKrit = true
 	}
 	if conf.Username == "" {
-		//log.Fatalln("Username can't be empty")
 		confFehler = append(confFehler, "Username can't be empty")
 		confFehlerKrit = true
 	}
 	if conf.Twitchchannel == "" {
-		//log.Fatalln("Kein Twitchchannel gesetzt, Nutzung des Programms ohne diesen Sinnlos.")
 		confFehler = append(confFehler, "Kein Twitchchannel gesetzt, Nutzung des Programms ohne diesen Sinnlos.")
 		confFehlerKrit = true
 	}
 	if conf.Lolaccountname == "" {
-		//log.Fatalln("Kein LolAccount gesetzt => kein Sinn der Software.")
 		confFehler = append(confFehler, "Kein LolAccount gesetzt => kein Sinn der Software.")
 		confFehlerKrit = true
 	}
 	if conf.Lolapikey == "" {
-		//log.Fatalln("Kein League API Key gesetzt, keine verfolgung möglich")
 		confFehler = append(confFehler, "Kein League API Key gesetzt, keine Verfolgung möglich.")
 		confFehlerKrit = true
 	}
 
 	if conf.Wettdauer == 0 {
 		conf.Wettdauer = 120
-		log.Println("Wettdauer nicht gesetzt, wurde auf 120s gesetzt.")
 		confFehler = append(confFehler, "OAuth can't be empty")
 	}
 
