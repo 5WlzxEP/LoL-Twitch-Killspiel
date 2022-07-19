@@ -7,6 +7,8 @@ Danach kann man die Daten z.B. per Webinterface Visualisieren. [Beispiel](https:
 
 ## Usage
 
+**Wichtig:** entfernt nach dem Auswerten alle json-Dateien der Länge 14 oder 15 im results-Ordner. 
+
 BaseRow Account notwendig.
 Anlegen einer Tabelle mit folgenden Spalten:
 
