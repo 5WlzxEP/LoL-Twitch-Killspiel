@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	config := getConfig("config.json")
+	config, fehlers, krit := getConfig("config.json")
 	f, err := os.OpenFile(config.Logpath+"killspiel.log", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
 	if err != nil {
 		fmt.Printf("error opening log-file: %v", err)
@@ -23,6 +23,14 @@ func main() {
 		}
 	}(f)
 	log.SetOutput(f)
+
+	for _, fehler := range *fehlers {
+		log.Println(fehler)
+	}
+	if krit {
+		return
+	}
+
 	log.Println("Starting...")
 
 	config.State = Killspiel.Idle
@@ -53,7 +61,7 @@ func main() {
 	}
 }
 
-func getConfig(file string) *Killspiel.Config {
+func getConfig(file string) (*Killspiel.Config, *[]string, bool) {
 	f, err := os.Open(file)
 	if err != nil {
 		log.Fatal(err)
@@ -70,5 +78,42 @@ func getConfig(file string) *Killspiel.Config {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return conf
+	var confFehler []string
+	var confFehlerKrit bool
+	if conf.Logpath == "" {
+		log.Fatalln("Logpath can't be empty")
+	}
+	if conf.Oath == "" {
+		//log.Fatalln("OAuth can't be empty")
+		confFehler = append(confFehler, "OAuth can't be empty")
+		confFehlerKrit = true
+	}
+	if conf.Username == "" {
+		//log.Fatalln("Username can't be empty")
+		confFehler = append(confFehler, "Username can't be empty")
+		confFehlerKrit = true
+	}
+	if conf.Twitchchannel == "" {
+		//log.Fatalln("Kein Twitchchannel gesetzt, Nutzung des Programms ohne diesen Sinnlos.")
+		confFehler = append(confFehler, "Kein Twitchchannel gesetzt, Nutzung des Programms ohne diesen Sinnlos.")
+		confFehlerKrit = true
+	}
+	if conf.Lolaccountname == "" {
+		//log.Fatalln("Kein LolAccount gesetzt => kein Sinn der Software.")
+		confFehler = append(confFehler, "Kein LolAccount gesetzt => kein Sinn der Software.")
+		confFehlerKrit = true
+	}
+	if conf.Lolapikey == "" {
+		//log.Fatalln("Kein League API Key gesetzt, keine verfolgung möglich")
+		confFehler = append(confFehler, "Kein League API Key gesetzt, keine Verfolgung möglich.")
+		confFehlerKrit = true
+	}
+
+	if conf.Wettdauer == 0 {
+		conf.Wettdauer = 120
+		log.Println("Wettdauer nicht gesetzt, wurde auf 120s gesetzt.")
+		confFehler = append(confFehler, "OAuth can't be empty")
+	}
+
+	return conf, &confFehler, confFehlerKrit
 }
