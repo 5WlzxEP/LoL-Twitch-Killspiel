@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"time"
 )
 
 func main() {
@@ -55,13 +56,26 @@ func main() {
 	//log.Println()
 	go Killspiel.StateControl(Killspiel.GetLolID(config.Lolaccountname))
 
-	err = config.TwitchClient.Connect()
-	if err != nil {
-		log.Fatal(err)
+	var timeErr []time.Time
+
+	for {
+		for i := 0; i < 3; i++ {
+			err = config.TwitchClient.Connect()
+			if err != nil {
+				log.Println(err)
+			}
+		}
+		timeErr = append(timeErr, time.Now())
+		if len(timeErr) > 5 {
+			if timeErr[0].Add(5 * time.Minute).Before(timeErr[5]) {
+				log.Fatal("More than 5 connection error with twitch in 5 Minutes, stopping!")
+			}
+			timeErr = timeErr[1:]
+		}
 	}
 }
 
-func getConfig(file string) (*Killspiel.Config, *[]string, bool) {
+func getConfig(file string) (*Killspiel.GlobalConfig, *[]string, bool) {
 	f, err := os.Open(file)
 	if err != nil {
 		log.Fatal(err)
@@ -73,7 +87,7 @@ func getConfig(file string) (*Killspiel.Config, *[]string, bool) {
 		}
 	}(f)
 	bites, _ := io.ReadAll(f)
-	conf := &Killspiel.Config{}
+	conf := &Killspiel.GlobalConfig{}
 	err = json.Unmarshal(bites, conf)
 	if err != nil {
 		log.Fatal(err)
@@ -104,7 +118,7 @@ func getConfig(file string) (*Killspiel.Config, *[]string, bool) {
 
 	if conf.Wettdauer == 0 {
 		conf.Wettdauer = 120
-		confFehler = append(confFehler, "OAuth can't be empty")
+		confFehler = append(confFehler, "Keine Wettdauer gesetzt")
 	}
 
 	return conf, &confFehler, confFehlerKrit
