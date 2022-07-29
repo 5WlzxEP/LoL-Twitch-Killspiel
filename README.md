@@ -27,7 +27,8 @@ Nach dem LoL Spiel wird die Anzahl an erzielten Kills automatisch aus der League
     "Joinmessage": true, 
     "LogPath": "./", 
     "TwitchPrefix": "/announce",
-    "Champions": ["Nilah", "Bel'Veth", "Miss Fortune", "Shaco"]
+    "Champions": ["Nilah", "Bel'Veth", "Miss Fortune", "Shaco"],
+    "CmdAfterAuswertung": "./Auswertung"
 }
 ```
 
