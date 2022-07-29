@@ -6,50 +6,21 @@ import (
 	"github.com/gempir/go-twitch-irc/v2"
 	"log"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"time"
 )
 
-type GameState uint16
-
-const (
-	Idle GameState = iota
-	Wettphase
-	Spielphase
-	Auswertungsphase
-	GameNoTrack
-)
-
-type Config struct {
-	Username       string `json:"Username"`
-	Oath           string `json:"Oath"`
-	Wettdauer      int    `json:"Wettdauer"`
-	Twitchchannel  string `json:"Twitchchannel"`
-	Lolaccountname string `json:"Lolaccountname"`
-	Lolapikey      string `json:"Lolapikey"`
-	Joinmessage    bool   `json:"Joinmessage"`
-	Logpath        string `json:"LogPath"`
-	Prefix         string `json:"TwitchPrefix"`
-	otp            bool
-	Champs         *[]string `json:"Champions"`
-	champsId       *[]int
-	State          GameState
-	TwitchClient   *twitch.Client
-}
-type result struct {
-	MatchId  int64            `json:"matchId"`
-	PlayerId string           `json:"playerId"`
-	Kills    int              `json:"kills"`
-	Tipps    map[int][]string `json:"Tipps"`
-}
-
+// bessereDaten hat den Vorteil, dass die Auswertung, wer Gewonnen und wer Verloren hat, leichter ist.
 var bessereDaten map[int][]string
-var config *Config
+var config *GlobalConfig
+
+// daten hat den Vorteil, dass während der Einsendephase die Zuschauer ihren Tipp beliebig ändern können.
 var daten map[string]int
 var wettdauer time.Duration
 
-func SetConfig(config2 *Config) {
+func SetConfig(config2 *GlobalConfig) {
 	config = config2
 	if config.otp = false; len(*config.Champs) > 0 {
 		config.otp = true
@@ -60,6 +31,7 @@ func SetConfig(config2 *Config) {
 	aktuellesGame = &game{}
 }
 
+// Message verarbeitet die eingehenden Nachrichten in der Zeit, in der die Wettphase läuft
 func Message(messagechan chan twitch.PrivateMessage) {
 	//var mess *twitch.PrivateMessage
 	for true {
@@ -77,6 +49,8 @@ func Message(messagechan chan twitch.PrivateMessage) {
 	}
 }
 
+// StarteWette startet die Wette. D.h. es wird für die Zeit von GlobalConfig.Wettdauer können die Zuschauer im Twitchchat
+// ihre Tipps angeben. Danach wird die Wette automatisch geschlossen und es werden keine weiteren Tippe angenommen.
 func StarteWette() {
 	log.Println("Starte Wettphase")
 	config.State = Wettphase
@@ -101,8 +75,32 @@ func StarteWette() {
 	for player, points := range daten {
 		bessereDaten[points] = append(bessereDaten[points], player)
 	}
+	daten = map[string]int{}
+
+	// save data as tmp_{game.matchId}.json for the case, that the programm crashes before the data get Ausgewertet
+	f, err := os.Create(fmt.Sprintf("results/tmp_%d.json", aktuellesGame.matchId))
+	if err != nil {
+		log.Printf("Error occured while saving data to tmp-File. %v\n", err)
+	}
+	defer func() {
+		err := f.Close()
+		if err != nil {
+			return
+		}
+	}()
+	dataBytes, err := json.Marshal(daten)
+	if err != nil {
+		log.Printf("Error occured while Marshalling data: %v\n", err)
+		return
+	}
+	_, err = f.Write(dataBytes)
+	if err != nil {
+		log.Printf("Error occured while writing data: %v\n", err)
+	}
+
 }
 
+// Auswertung wertet die bessereDaten aus. Dazu speichert es die Ergebnisse in {game.matchId}.json
 func Auswertung() {
 	log.Println("Starte Auswertungsphase")
 	config.State = Auswertungsphase
@@ -154,10 +152,12 @@ func Auswertung() {
 			gewinner := bessereDaten[kills]
 
 			res := result{
-				MatchId:  aktuellesGame.matchId,
-				PlayerId: aktuellesGame.playerId,
-				Kills:    kills,
-				Tipps:    bessereDaten,
+				MatchId:         aktuellesGame.matchId,
+				PlayerId:        aktuellesGame.playerId,
+				PlayerChampId:   killd.Info.Participants[ind].ChampionId,
+				PlayerChampName: killd.Info.Participants[ind].ChampionName,
+				Kills:           kills,
+				Tipps:           bessereDaten,
 			}
 
 			file, err := os.Create(fmt.Sprintf("results/%d.json", aktuellesGame.matchId))
@@ -190,8 +190,11 @@ func Auswertung() {
 					config.Prefix, config.Lolaccountname, kills, strings.Join(gewinner, ", "), haben))
 		}
 	}
-	daten = map[string]int{}
 	bessereDaten = map[int][]string{}
 	config.State = Idle
 	aktuellesGame.matchId = 0
+
+	if config.CmdAfterAuswertung != "" {
+		exec.Command(config.CmdAfterAuswertung)
+	}
 }
