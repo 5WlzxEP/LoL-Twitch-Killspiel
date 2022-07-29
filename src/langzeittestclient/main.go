@@ -7,13 +7,14 @@ import (
 	"io"
 	"math/rand"
 	"os"
+	"sync"
 	"time"
 )
 
 type conf struct {
-	TwitchUser  string `json:"twitchUser"`
-	TwitchOAuth string `json:"twitchOAuth"`
-	Channel     string `json:"channel"`
+	TwitchUser  []string `json:"twitchUser"`
+	TwitchOAuth []string `json:"twitchOAuth"`
+	Channel     string   `json:"channel"`
 }
 
 func main() {
@@ -30,16 +31,31 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Printf("%s ready", config.TwitchUser)
-	client := twitch.NewClient(config.TwitchUser, config.TwitchOAuth)
 
+	if len(config.TwitchUser) != len(config.TwitchOAuth) {
+		panic("length of TwitchUser must be length of TwitchOAuth")
+	}
+	var wg sync.WaitGroup
+	for i := range config.TwitchUser {
+		wg.Add(1)
+
+		go func(i int) {
+			defer wg.Done()
+			client(config.TwitchUser[i], config.TwitchOAuth[i], &config)
+		}(i)
+	}
+	wg.Wait()
+}
+
+func client(username string, oauth string, config *conf) {
+	client := twitch.NewClient(username, oauth)
 	client.OnPrivateMessage(func(message twitch.PrivateMessage) {
 		if message.Message == "Killspiel hat begonnen, nimm mit '!vote [Zahl]' teil." {
 			client.Say(config.Channel, fmt.Sprintf("!vote %d", rand.Intn(15)))
 		}
 	})
 	client.Join(config.Channel)
-	err = client.Connect()
+	err := client.Connect()
 	if err != nil {
 		fmt.Println(err)
 	}
