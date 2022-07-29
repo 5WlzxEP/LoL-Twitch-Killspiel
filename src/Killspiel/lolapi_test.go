@@ -33,20 +33,24 @@ func TestGetKills(t *testing.T) {
 			GameMode     string `json:"gameMode"`
 			GameType     string `json:"gameType"`
 			Participants []struct {
-				Assists              int  `json:"assists"`
-				Deaths               int  `json:"deaths"`
-				Kills                int  `json:"kills"`
-				ParticipantId        int  `json:"participantId"`
-				TeamEarlySurrendered bool `json:"teamEarlySurrendered"`
-				Win                  bool `json:"win"`
+				Assists              int    `json:"assists"`
+				ChampionId           int    `json:"championId"`
+				ChampionName         string `json:"championName"`
+				Deaths               int    `json:"deaths"`
+				Kills                int    `json:"kills"`
+				ParticipantId        int    `json:"participantId"`
+				TeamEarlySurrendered bool   `json:"teamEarlySurrendered"`
+				Win                  bool   `json:"win"`
 			} `json:"participants"`
 		}{GameId: 5967718649, GameMode: "CLASSIC", GameType: "MATCHED_GAME", Participants: []struct {
-			Assists              int  `json:"assists"`
-			Deaths               int  `json:"deaths"`
-			Kills                int  `json:"kills"`
-			ParticipantId        int  `json:"participantId"`
-			TeamEarlySurrendered bool `json:"teamEarlySurrendered"`
-			Win                  bool `json:"win"`
+			Assists              int    `json:"assists"`
+			ChampionId           int    `json:"championId"`
+			ChampionName         string `json:"championName"`
+			Deaths               int    `json:"deaths"`
+			Kills                int    `json:"kills"`
+			ParticipantId        int    `json:"participantId"`
+			TeamEarlySurrendered bool   `json:"teamEarlySurrendered"`
+			Win                  bool   `json:"win"`
 		}{{Assists: 8, Deaths: 1, Kills: 4, ParticipantId: 1, TeamEarlySurrendered: false, Win: true},
 			{Assists: 5, Deaths: 0, Kills: 14, ParticipantId: 2, TeamEarlySurrendered: false, Win: true},
 			{Assists: 8, Deaths: 2, Kills: 5, ParticipantId: 3, TeamEarlySurrendered: false, Win: true},
@@ -69,7 +73,7 @@ func TestGetKills(t *testing.T) {
 	}
 }
 
-func getConfig(file string) *Config {
+func getConfig(file string) *GlobalConfig {
 	f, err := os.Open(file)
 	if err != nil {
 		log.Fatal(err)
@@ -81,7 +85,7 @@ func getConfig(file string) *Config {
 		}
 	}(f)
 	bites, _ := io.ReadAll(f)
-	conf := &Config{}
+	conf := &GlobalConfig{}
 	err = json.Unmarshal(bites, conf)
 	if err != nil {
 		log.Fatal(err)
