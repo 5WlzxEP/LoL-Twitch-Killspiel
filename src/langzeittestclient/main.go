@@ -7,6 +7,7 @@ import (
 	"io"
 	"math/rand"
 	"os"
+	"time"
 )
 
 type conf struct {
@@ -17,11 +18,19 @@ type conf struct {
 
 func main() {
 
-	f, _ := os.Open("config.json")
+	rand.Seed(time.Now().UnixNano())
+
+	f, err := os.Open("config.json")
+	if err != nil {
+		fmt.Println(err)
+	}
 	data, _ := io.ReadAll(f)
 	var config conf
-	_ = json.Unmarshal(data, &config)
-
+	err = json.Unmarshal(data, &config)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Printf("%s ready", config.TwitchUser)
 	client := twitch.NewClient(config.TwitchUser, config.TwitchOAuth)
 
 	client.OnPrivateMessage(func(message twitch.PrivateMessage) {
@@ -29,4 +38,9 @@ func main() {
 			client.Say(config.Channel, fmt.Sprintf("!vote %d", rand.Intn(15)))
 		}
 	})
+	client.Join(config.Channel)
+	err = client.Connect()
+	if err != nil {
+		fmt.Println(err)
+	}
 }
