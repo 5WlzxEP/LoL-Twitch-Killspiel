@@ -8,15 +8,7 @@ import (
 	"strconv"
 )
 
-type champion struct {
-	Type string `json:"type"`
-	Data map[string]struct {
-		Id   string `json:"id"`
-		Key  string `json:"key"`
-		Name string `json:"name"`
-	} `json:"data"`
-}
-
+// loadChamps erstellt eine map, die ChampionsNamen auf ChampionIds abbildet.
 func loadChamps(file string) *map[string]string {
 	f, err := os.Open(file)
 	if err != nil {
@@ -44,6 +36,7 @@ func loadChamps(file string) *map[string]string {
 	return &champ
 }
 
+// champNamesToInt gibt das entsprechende int-Array zu dem gegebenen ChampionNamen-Array.
 func champNamesToId(names *[]string) *[]int {
 	champions := loadChamps("champions.json")
 	res := make([]int, len(*names))

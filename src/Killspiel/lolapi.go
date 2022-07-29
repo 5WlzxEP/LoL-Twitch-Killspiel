@@ -9,59 +9,9 @@ import (
 	"time"
 )
 
-type summoner struct {
-	Id            string `json:"id"`
-	AccountId     string `json:"accountId"`
-	Puuid         string `json:"puuid"`
-	Name          string `json:"name"`
-	ProfileIconId int    `json:"profileIconId"`
-	RevisionDate  int    `json:"revisionDate"`
-	SummonerLevel int    `json:"summonerLevel"`
-}
-
-type spectatorStruct struct {
-	GameId       int64  `json:"gameId"`
-	GameMode     string `json:"gameMode"`
-	GameType     string `json:"gameType"`
-	Participants [10]struct {
-		ChampionId   int    `json:"championId"`
-		SummonerName string `json:"summonerName"`
-		SummonerId   string `json:"summonerId"`
-	} `json:"participants"`
-	GameLength int `json:"gameLength"`
-	Status     struct {
-		Message    string `json:"message"`
-		StatusCode int    `json:"status_code"`
-	} `json:"status"`
-}
-
-type killData struct {
-	Metadata struct {
-		MatchId      string   `json:"matchId"`
-		Participants []string `json:"participants"`
-	} `json:"metadata"`
-	Info struct {
-		GameId       int64  `json:"gameId"`
-		GameMode     string `json:"gameMode"`
-		GameType     string `json:"gameType"`
-		Participants []struct {
-			Assists              int  `json:"assists"`
-			Deaths               int  `json:"deaths"`
-			Kills                int  `json:"kills"`
-			ParticipantId        int  `json:"participantId"`
-			TeamEarlySurrendered bool `json:"teamEarlySurrendered"`
-			Win                  bool `json:"win"`
-		} `json:"participants"`
-	} `json:"info"`
-}
-
-type game struct {
-	matchId  int64
-	playerId string
-}
-
 var aktuellesGame *game
 
+// StateControl sorgt für die regelmäßige (60s) Aktualisierung des GlobalConfig.State.
 func StateControl(LoLId string) {
 	aktuellesGame.playerId = LoLId
 	for ; true; time.Sleep(1 * time.Minute) {
@@ -106,6 +56,7 @@ func StateControl(LoLId string) {
 	}
 }
 
+// GetLolID gibt die ID zu einem LoL-Account aus
 func GetLolID(lolaccount string) string {
 	res, err := http.Get(fmt.Sprintf("https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/%s?api_key=%s", lolaccount, config.Lolapikey))
 	if err != nil {
@@ -123,6 +74,7 @@ func GetLolID(lolaccount string) string {
 	return summ.Id
 }
 
+// lolidToPuuid gibt die PUUID zum game.playerId aus.
 func lolidToPuuid() string {
 	res, err := http.Get(fmt.Sprintf("https://euw1.api.riotgames.com/lol/summoner/v4/summoners/%s?api_key=%s", aktuellesGame.playerId, config.Lolapikey))
 	if err != nil {
@@ -140,6 +92,7 @@ func lolidToPuuid() string {
 	return summ.Puuid
 }
 
+// GetKills gibt killData zu game.matchId aus
 func GetKills() *killData {
 	res, err := http.Get(fmt.Sprintf("https://europe.api.riotgames.com/lol/match/v5/matches/EUW1_%d?api_key=%s", aktuellesGame.matchId, config.Lolapikey))
 	if err != nil {
@@ -157,6 +110,7 @@ func GetKills() *killData {
 	return killData
 }
 
+// isElementOfArray checks if an element is part of an unsorted array.
 func isElementOfArray[T comparable](arr *[]T, ele T) bool {
 	log.Println(*arr)
 	for _, v := range *arr {
