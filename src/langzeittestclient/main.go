@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/gempir/go-twitch-irc/v2"
 	"io"
+	"log"
 	"math/rand"
 	"os"
-	"sync"
 	"time"
 )
 
@@ -29,34 +29,32 @@ func main() {
 	var config conf
 	err = json.Unmarshal(data, &config)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 
 	if len(config.TwitchUser) != len(config.TwitchOAuth) {
 		panic("length of TwitchUser must be length of TwitchOAuth")
 	}
-	var wg sync.WaitGroup
+	var clients []*twitch.Client
 	for i := range config.TwitchUser {
-		wg.Add(1)
-
-		go func(i int) {
-			defer wg.Done()
-			client(config.TwitchUser[i], config.TwitchOAuth[i], &config)
-		}(i)
+		clients = append(clients, twitch.NewClient(config.TwitchUser[i], config.TwitchOAuth[i]))
+		//client(config.TwitchUser[i], config.TwitchOAuth[i], &config)
 	}
-	wg.Wait()
-}
-
-func client(username string, oauth string, config *conf) {
-	client := twitch.NewClient(username, oauth)
-	client.OnPrivateMessage(func(message twitch.PrivateMessage) {
+	clients[0].OnPrivateMessage(func(message twitch.PrivateMessage) {
 		if message.Message == "Killspiel hat begonnen, nimm mit '!vote [Zahl]' teil." {
-			client.Say(config.Channel, fmt.Sprintf("!vote %d", rand.Intn(15)))
+			for _, client := range clients {
+				client.Say(config.Channel, fmt.Sprintf("!vote %d", rand.Intn(15)))
+			}
 		}
 	})
-	client.Join(config.Channel)
-	err := client.Connect()
-	if err != nil {
-		fmt.Println(err)
+
+	for _, client := range clients {
+		client.Join(config.Channel)
+		go func(client *twitch.Client) {
+			err := client.Connect()
+			if err != nil {
+				log.Println(err)
+			}
+		}(client)
 	}
 }
