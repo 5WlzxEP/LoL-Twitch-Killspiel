@@ -33,9 +33,9 @@ func SetConfig(config2 *GlobalConfig) {
 
 // Message verarbeitet die eingehenden Nachrichten in der Zeit, in der die Wettphase läuft
 func Message(messages chan twitch.PrivateMessage) {
-	//var mess *twitch.PrivateMessage
+	var message twitch.PrivateMessage
 	for true {
-		message := <-messages
+		message = <-messages
 		if strings.HasPrefix(message.Message, "!vote ") {
 			_, value, found := strings.Cut(message.Message, " ")
 			if found {
@@ -105,10 +105,10 @@ func StarteWette() {
 func Auswertung() {
 	log.Println("Starte Auswertungsphase")
 	config.State = Auswertungsphase
-	killd := GetKills()
+	data := GetKills()
 
 	var ind = 11
-	for i, v := range killd.Metadata.Participants {
+	for i, v := range data.Metadata.Participants {
 		if v == config.lolPUUID {
 			ind = i
 			break
@@ -143,15 +143,17 @@ func Auswertung() {
 		}
 		log.Printf("player not found in result. But saved tipps in results/error_%d.json\n", aktuellesGame.matchId)
 
+		// debug to find reason why sometimes doesn't work, thesis: to early, riot didn't refresh data till then
+		fmt.Printf("%#v\n", data)
 	} else {
 
 		// check if remake
-		if killd.Info.Participants[ind].TeamEarlySurrendered || killd.Info.Participants[(ind+5)%10].TeamEarlySurrendered {
+		if data.Info.Participants[ind].TeamEarlySurrendered || data.Info.Participants[(ind+5)%10].TeamEarlySurrendered {
 			log.Println("Auswertung abgebrochen, da geremaked wurde.")
 			config.TwitchClient.Say(config.Twitchchannel, config.Prefix+" Killspiel wurde abgebrochen, da Remaked wurde.")
 
 		} else {
-			kills := killd.Info.Participants[ind].Kills
+			kills := data.Info.Participants[ind].Kills
 
 			// important for the twitch message
 			gewinner := bessereDaten[kills]
@@ -159,8 +161,8 @@ func Auswertung() {
 			res := result{
 				MatchId:         aktuellesGame.matchId,
 				PlayerId:        aktuellesGame.playerId,
-				PlayerChampId:   killd.Info.Participants[ind].ChampionId,
-				PlayerChampName: killd.Info.Participants[ind].ChampionName,
+				PlayerChampId:   data.Info.Participants[ind].ChampionId,
+				PlayerChampName: data.Info.Participants[ind].ChampionName,
 				Kills:           kills,
 				Tipps:           bessereDaten,
 			}
