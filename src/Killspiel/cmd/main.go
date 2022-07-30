@@ -54,7 +54,11 @@ func main() {
 	}
 
 	//log.Println()
-	go Killspiel.StateControl(Killspiel.GetLolID(config.Lolaccountname))
+	id, err := Killspiel.GetLolID(config.Lolaccountname)
+	if err != nil {
+		log.Fatal(err)
+	}
+	go Killspiel.StateControl(id)
 
 	var timeErr []time.Time
 
@@ -119,6 +123,20 @@ func getConfig(file string) (*Killspiel.GlobalConfig, *[]string, bool) {
 	if conf.Wettdauer == 0 {
 		conf.Wettdauer = 120
 		confFehler = append(confFehler, "Keine Wettdauer gesetzt")
+	}
+
+	if conf.LoLRegion == "" {
+		conf.LoLRegion = "euw1"
+		conf.LolServer = Killspiel.Europe
+	} else {
+		region, server, notFound := Killspiel.LoLRegionToServer(conf.LoLRegion)
+		if notFound {
+			confFehler = append(confFehler, "Falsche Region gesetzt.")
+			confFehlerKrit = true
+		} else {
+			conf.LoLRegion = region
+			conf.LolServer = server
+		}
 	}
 
 	return conf, &confFehler, confFehlerKrit

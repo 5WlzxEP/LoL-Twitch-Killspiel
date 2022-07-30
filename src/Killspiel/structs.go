@@ -2,7 +2,7 @@ package Killspiel
 
 import "github.com/gempir/go-twitch-irc/v2"
 
-type GameState uint16
+type GameState uint8
 
 const (
 	Idle GameState = iota
@@ -10,6 +10,15 @@ const (
 	Spielphase
 	Auswertungsphase
 	GameNoTrack
+)
+
+type LolServer string
+
+const (
+	America LolServer = "americas"
+	Asia    LolServer = "asia"
+	Europe  LolServer = "europe"
+	Sea     LolServer = "sea"
 )
 
 type champion struct {
@@ -33,6 +42,8 @@ type GlobalConfig struct {
 	Twitchchannel      string `json:"Twitchchannel"`
 	Lolaccountname     string `json:"Lolaccountname"`
 	Lolapikey          string `json:"Lolapikey"`
+	LoLRegion          string `json:"LoLRegion"`
+	LolServer          LolServer
 	Joinmessage        bool   `json:"Joinmessage"`
 	Logpath            string `json:"LogPath"`
 	Prefix             string `json:"TwitchPrefix"`
@@ -54,6 +65,10 @@ type result struct {
 }
 
 type summoner struct {
+	Status struct {
+		Message    string `json:"message"`
+		StatusCode int    `json:"status_code"`
+	} `json:"status"`
 	Id            string `json:"id"`
 	AccountId     string `json:"accountId"`
 	Puuid         string `json:"puuid"`

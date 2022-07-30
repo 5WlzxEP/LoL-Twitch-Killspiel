@@ -2,10 +2,12 @@ package Killspiel
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -15,7 +17,7 @@ var aktuellesGame *game
 func StateControl(LoLId string) {
 	aktuellesGame.playerId = LoLId
 	for ; true; time.Sleep(1 * time.Minute) {
-		res, err := http.Get(fmt.Sprintf("https://euw1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/%s?api_key=%s", LoLId, config.Lolapikey))
+		res, err := http.Get(fmt.Sprintf("https://%s.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/%s?api_key=%s", config.LoLRegion, LoLId, config.Lolapikey))
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -57,8 +59,8 @@ func StateControl(LoLId string) {
 }
 
 // GetLolID gibt die ID zu einem LoL-Account aus
-func GetLolID(lolaccount string) string {
-	res, err := http.Get(fmt.Sprintf("https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/%s?api_key=%s", lolaccount, config.Lolapikey))
+func GetLolID(lolaccount string) (string, error) {
+	res, err := http.Get(fmt.Sprintf("https://%s.api.riotgames.com/lol/summoner/v4/summoners/by-name/%s?api_key=%s", config.LoLRegion, lolaccount, config.Lolapikey))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -71,12 +73,17 @@ func GetLolID(lolaccount string) string {
 	bites, _ := io.ReadAll(res.Body)
 	summ := &summoner{}
 	err = json.Unmarshal(bites, summ)
-	return summ.Id
+
+	if summ.Status.StatusCode != 0 {
+		return "", errors.New(summ.Status.Message)
+	}
+
+	return summ.Id, nil
 }
 
 // lolidToPuuid gibt die PUUID zum game.playerId aus.
 func lolidToPuuid() string {
-	res, err := http.Get(fmt.Sprintf("https://euw1.api.riotgames.com/lol/summoner/v4/summoners/%s?api_key=%s", aktuellesGame.playerId, config.Lolapikey))
+	res, err := http.Get(fmt.Sprintf("https://%s.api.riotgames.com/lol/summoner/v4/summoners/%s?api_key=%s", config.LoLRegion, aktuellesGame.playerId, config.Lolapikey))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -94,7 +101,7 @@ func lolidToPuuid() string {
 
 // GetKills gibt killData zu game.matchId aus
 func GetKills() *killData {
-	res, err := http.Get(fmt.Sprintf("https://europe.api.riotgames.com/lol/match/v5/matches/EUW1_%d?api_key=%s", aktuellesGame.matchId, config.Lolapikey))
+	res, err := http.Get(fmt.Sprintf("https://%s.api.riotgames.com/lol/match/v5/matches/%s_%d?api_key=%s", config.LolServer, strings.ToUpper(config.LoLRegion), aktuellesGame.matchId, config.Lolapikey))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -112,7 +119,7 @@ func GetKills() *killData {
 
 // isElementOfArray checks if an element is part of an unsorted array.
 func isElementOfArray[T comparable](arr *[]T, ele T) bool {
-	log.Println(*arr)
+	//log.Println(*arr)
 	for _, v := range *arr {
 		if v == ele {
 			return true
@@ -120,3 +127,46 @@ func isElementOfArray[T comparable](arr *[]T, ele T) bool {
 	}
 	return false
 }
+
+func LoLRegionToServer(region string) (string, LolServer, bool) {
+	region = strings.ToLower(region)
+	switch region {
+	case "las":
+		return "la2", America, false
+	case "lan":
+		return "la1", America, false
+	}
+
+	if isElementOfArray[string](&[]string{"br", "eun", "euw", "jp", "na", "oc", "tr"}, region) {
+		region = fmt.Sprintf("%s1", region)
+	}
+
+	switch {
+	case isElementOfArray[string](&[]string{"na1", "br1"}, region):
+		return region, America, false
+	case isElementOfArray[string](&[]string{"jp1", "kr"}, region):
+		return region, Asia, false
+	case isElementOfArray[string](&[]string{"eun1", "euw1", "ru", "tr1"}, region):
+		return region, Europe, false
+	case region == "oc1":
+		return region, Sea, false
+	}
+	return "", "", true
+}
+
+// America
+//BR1
+//NA1
+
+// Asia
+//JP1
+//KR
+
+// Europe
+//EUN1
+//EUW1
+//RU
+//TR1
+
+// Sea
+//OC1

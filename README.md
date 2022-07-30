@@ -23,7 +23,8 @@ Nach dem LoL Spiel wird die Anzahl an erzielten Kills automatisch aus der League
     "Wettdauer": 120, 
     "Twitchchannel": "5w_lzxep", 
     "Lolaccountname": "5w_lzxep", 
-    "Lolapikey": "RGAPI-cm5wf8rs-akq5-xrqh-is5p-4skbgcv1ekjg", 
+    "Lolapikey": "RGAPI-cm5wf8rs-akq5-xrqh-is5p-4skbgcv1ekjg",
+    "LoLRegion": "EUW1",
     "Joinmessage": true, 
     "LogPath": "./", 
     "TwitchPrefix": "/announce",
@@ -32,19 +33,37 @@ Nach dem LoL Spiel wird die Anzahl an erzielten Kills automatisch aus der League
 }
 ```
 
-| Schlüsselwort       | Bedeutung                                                                                                                                                                                                                                                                                                                                | Required   | Standardwert                 |
-|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|------------------------------|
-| Username            | Nutzername für Twitch. Muss Moderator sein, wenn /announce o.ä. genutzt werden soll.                                                                                                                                                                                                                                                     | ✓          | /                            |
-| OAuth               | Twitch Auth Token                                                                                                                                                                                                                                                                                                                        | ✓          | /                            |
-| Wettdauer           | Sekunden, die der Chat Zeit hat abzustimmen                                                                                                                                                                                                                                                                                              | ×          | 120 Sekunden                 | 
-| Twitchchannel       | Twitchchannel, auf dem die Nachrichten kommen und die Votes ausgelesen werden                                                                                                                                                                                                                                                            | ✓          | /                            |
-| Lolaccountname      | Accountname der getrackt wird                                                                                                                                                                                                                                                                                                            | ✓          | /                            | 
-| Lolapikey           | LoL api zugang                                                                                                                                                                                                                                                                                                                           | ✓          | /                            |
-| Joinmessage         | Ob eine Nachricht geschickt werden soll, wenn der Bot verbunden ist.                                                                                                                                                                                                                                                                     | ×          | Nein/false                   | 
-| LogPath             | Pfad der Log-Datei, ./ ist das aktuelle Verzeichnis                                                                                                                                                                                                                                                                                      | ×          | `./` / Aktuelles Verzeichnis |
-| TwitchPrefix        | Prefix der Beginn, Ende und Auswertungsnachricht. Achtung kann Twitchkommands ausführen, wie z.B. "/announce", "/me", aber auch "/ban 5W_lzxEP".                                                                                                                                                                                         | ×          | ` ` / nichts                 |
-| Champions           | Liste an Champions, bei denen der Bot triggrt. Falls leer wird jeder Champ akzeptiert.<br/> Die genaue Schreibweise der Champs kannst du [hier](Champs.md) nachgucken <br/> Es muss eine champions.json Datei im selben Verzeichnis liegen, sofern die LListe nicht leer ist. Dies kann über die `Champion_aktualisieren` gamacht werden | ×          | alle                         |
- | CmdAfterAuswertung  | Shellcommand der nach der Erstellung von einem Result ausgeführt wird. Z.B. falls eine Aktualisierung einer Datenbank vorgenommen werden soll, kann man diesen Prozess hiermit auslösen                                                                                                                                                  | ×          | leer / macht nichts          |
+| Schlüsselwort       | Bedeutung                                                                                                                                                                                                                                                                                                                                | Required | Standardwert                 |
+|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|------------------------------|
+| Username            | Nutzername für Twitch. Muss Moderator sein, wenn /announce o.ä. genutzt werden soll.                                                                                                                                                                                                                                                     | ✓        | /                            |
+| OAuth               | Twitch Auth Token                                                                                                                                                                                                                                                                                                                        | ✓        | /                            |
+| Wettdauer           | Sekunden, die der Chat Zeit hat abzustimmen                                                                                                                                                                                                                                                                                              | ×        | 120 Sekunden                 | 
+| Twitchchannel       | Twitchchannel, auf dem die Nachrichten kommen und die Votes ausgelesen werden                                                                                                                                                                                                                                                            | ✓        | /                            |
+| Lolaccountname      | Accountname der getrackt wird                                                                                                                                                                                                                                                                                                            | ✓        | /                            | 
+| Lolapikey           | LoL api zugang                                                                                                                                                                                                                                                                                                                           | ✓        | /                            |
+| LoLRegion           | Region des LoL-Accountes                                                                                                                                                                                                                                                                                                                 | ×        | `euw1`                       |
+| Joinmessage         | Ob eine Nachricht geschickt werden soll, wenn der Bot verbunden ist.                                                                                                                                                                                                                                                                     | ×        | Nein/false                   | 
+| LogPath             | Pfad der Log-Datei, ./ ist das aktuelle Verzeichnis                                                                                                                                                                                                                                                                                      | ×        | `./` / Aktuelles Verzeichnis |
+| TwitchPrefix        | Prefix der Beginn, Ende und Auswertungsnachricht. Achtung kann Twitchkommands ausführen, wie z.B. "/announce", "/me", aber auch "/ban 5W_lzxEP".                                                                                                                                                                                         | ×        | ` ` / nichts                 |
+| Champions           | Liste an Champions, bei denen der Bot triggrt. Falls leer wird jeder Champ akzeptiert.<br/> Die genaue Schreibweise der Champs kannst du [hier](Champs.md) nachgucken <br/> Es muss eine champions.json Datei im selben Verzeichnis liegen, sofern die LListe nicht leer ist. Dies kann über die `Champion_aktualisieren` gamacht werden | ×        | alle                         |
+| CmdAfterAuswertung  | Shellcommand der nach der Erstellung von einem Result ausgeführt wird. Z.B. falls eine Aktualisierung einer Datenbank vorgenommen werden soll, kann man diesen Prozess hiermit auslösen                                                                                                                                                  | ×        | leer / macht nichts          |
+
+### LoL-Rgionen
+
+Folgende LoL-Regionen gibt es:
+
+- BR1
+- EUN1
+- EUW1
+- JP1
+- KR
+- LA1 / LAN
+- LA2 / LAS
+- NA1
+- OC1
+- RU
+- TR1
+
 ## Beschaffung der API-Token
 
 ### OAuth
