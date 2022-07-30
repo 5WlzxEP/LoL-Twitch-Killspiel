@@ -81,6 +81,7 @@ func StarteWette() {
 	f, err := os.Create(fmt.Sprintf("results/tmp_%d.json", aktuellesGame.matchId))
 	if err != nil {
 		log.Printf("Error occured while saving data to tmp-File. %v\n", err)
+		return
 	}
 	defer func() {
 		err := f.Close()
@@ -88,7 +89,7 @@ func StarteWette() {
 			return
 		}
 	}()
-	dataBytes, err := json.Marshal(daten)
+	dataBytes, err := json.Marshal(bessereDaten)
 	if err != nil {
 		log.Printf("Error occured while Marshalling data: %v\n", err)
 		return
@@ -138,6 +139,7 @@ func Auswertung() {
 		_, err = file.Write(bites)
 		if err != nil {
 			log.Printf("Error occurded writing error res: %v\n", err)
+			return
 		}
 		log.Printf("player not found in result. But saved tipps in results/error_%d.json\n", aktuellesGame.matchId)
 
@@ -190,6 +192,12 @@ func Auswertung() {
 					config.Prefix, config.Lolaccountname, kills, strings.Join(gewinner, ", "), haben))
 		}
 	}
+
+	err = os.Remove(fmt.Sprintf("results/tmp_%d.json", aktuellesGame.matchId))
+	if err != nil {
+		log.Printf("An error occured while deleting results/tmp_%d.json: %v\n", aktuellesGame.matchId, err)
+	}
+
 	bessereDaten = map[int][]string{}
 	config.State = Idle
 	aktuellesGame.matchId = 0
