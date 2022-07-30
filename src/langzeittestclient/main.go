@@ -8,6 +8,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"sync"
 	"time"
 )
 
@@ -48,13 +49,17 @@ func main() {
 		}
 	})
 
+	var wg sync.WaitGroup
+	wg.Add(len(clients))
 	for _, client := range clients {
 		client.Join(config.Channel)
 		go func(client *twitch.Client) {
+			defer wg.Done()
 			err := client.Connect()
 			if err != nil {
 				log.Println(err)
 			}
 		}(client)
 	}
+	wg.Wait()
 }
