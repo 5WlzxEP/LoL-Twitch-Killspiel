@@ -16,6 +16,7 @@ var aktuellesGame *game
 // StateControl sorgt für die regelmäßige (60s) Aktualisierung des GlobalConfig.State.
 func StateControl(LoLId string) {
 	aktuellesGame.playerId = LoLId
+	config.lolPUUID = lolidToPuuid(LoLId)
 	for ; true; time.Sleep(1 * time.Minute) {
 		res, err := http.Get(fmt.Sprintf("https://%s.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/%s?api_key=%s", config.LoLRegion, LoLId, config.Lolapikey))
 		if err != nil {
@@ -82,8 +83,8 @@ func GetLolID(lolaccount string) (string, error) {
 }
 
 // lolidToPuuid gibt die PUUID zum game.playerId aus.
-func lolidToPuuid() string {
-	res, err := http.Get(fmt.Sprintf("https://%s.api.riotgames.com/lol/summoner/v4/summoners/%s?api_key=%s", config.LoLRegion, aktuellesGame.playerId, config.Lolapikey))
+func lolidToPuuid(id string) string {
+	res, err := http.Get(fmt.Sprintf("https://%s.api.riotgames.com/lol/summoner/v4/summoners/%s?api_key=%s", config.LoLRegion, id, config.Lolapikey))
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -41,6 +41,7 @@ type GlobalConfig struct {
 	Wettdauer          int    `json:"Wettdauer"`
 	Twitchchannel      string `json:"Twitchchannel"`
 	Lolaccountname     string `json:"Lolaccountname"`
+	lolPUUID           string
 	Lolapikey          string `json:"Lolapikey"`
 	LoLRegion          string `json:"LoLRegion"`
 	LolServer          LolServer
