@@ -142,14 +142,14 @@ func LoLRegionToServer(region string) (string, LolServer, bool) {
 		region = fmt.Sprintf("%s1", region)
 	}
 
-	switch {
-	case isElementOfArray[string](&[]string{"na1", "br1"}, region):
+	switch region {
+	case "na1", "br1":
 		return region, America, false
-	case isElementOfArray[string](&[]string{"jp1", "kr"}, region):
+	case "jp1", "kr":
 		return region, Asia, false
-	case isElementOfArray[string](&[]string{"eun1", "euw1", "ru", "tr1"}, region):
+	case "eun1", "euw1", "ru", "tr1":
 		return region, Europe, false
-	case region == "oc1":
+	case "oc1":
 		return region, Sea, false
 	}
 	return "", "", true
