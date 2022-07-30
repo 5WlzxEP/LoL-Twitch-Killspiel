@@ -32,11 +32,11 @@ func SetConfig(config2 *GlobalConfig) {
 }
 
 // Message verarbeitet die eingehenden Nachrichten in der Zeit, in der die Wettphase läuft
-func Message(messagechan chan twitch.PrivateMessage) {
+func Message(messages chan twitch.PrivateMessage) {
 	//var mess *twitch.PrivateMessage
 	for true {
-		message := <-messagechan
-		if strings.HasPrefix(message.Message, "!vote") {
+		message := <-messages
+		if strings.HasPrefix(message.Message, "!vote ") {
 			_, value, found := strings.Cut(message.Message, " ")
 			if found {
 				v, err := strconv.Atoi(value)
@@ -107,10 +107,9 @@ func Auswertung() {
 	config.State = Auswertungsphase
 	killd := GetKills()
 
-	var ind int = 11
-	player := lolidToPuuid()
-	for i := range killd.Metadata.Participants {
-		if killd.Metadata.Participants[i] == player {
+	var ind = 11
+	for i, v := range killd.Metadata.Participants {
+		if v == config.lolPUUID {
 			ind = i
 			break
 		}
@@ -125,6 +124,7 @@ func Auswertung() {
 		}
 	}
 
+	// if player is not found in the result
 	if ind == 11 {
 		res := result{MatchId: aktuellesGame.matchId, PlayerId: aktuellesGame.playerId, Kills: -1, Tipps: bessereDaten}
 
@@ -145,12 +145,15 @@ func Auswertung() {
 
 	} else {
 
+		// check if remake
 		if killd.Info.Participants[ind].TeamEarlySurrendered || killd.Info.Participants[(ind+5)%10].TeamEarlySurrendered {
 			log.Println("Auswertung abgebrochen, da geremaked wurde.")
 			config.TwitchClient.Say(config.Twitchchannel, config.Prefix+" Killspiel wurde abgebrochen, da Remaked wurde.")
 
 		} else {
 			kills := killd.Info.Participants[ind].Kills
+
+			// important for the twitch message
 			gewinner := bessereDaten[kills]
 
 			res := result{
@@ -162,6 +165,7 @@ func Auswertung() {
 				Tipps:           bessereDaten,
 			}
 
+			// write result into file
 			file, err := os.Create(fmt.Sprintf("results/%d.json", aktuellesGame.matchId))
 			if err != nil {
 				log.Fatal(err)
@@ -176,32 +180,35 @@ func Auswertung() {
 			}
 			log.Printf("Ergebnis gespeichert in results/%d.json\n", aktuellesGame.matchId)
 
+			// write twitch message
 			var haben string
 			switch len(gewinner) {
-			case 1:
-				haben = "hat"
 			case 0:
 				haben = "Keiner hat"
+			case 1:
+				haben = "hat"
 			default:
 				haben = "haben"
 
 			}
-
 			config.TwitchClient.Say(config.Twitchchannel,
 				fmt.Sprintf("%s Killspiel wurde beendet. %s hat %d Kill(s) gemacht. %s %s die richtige Killanzahl getippt.",
 					config.Prefix, config.Lolaccountname, kills, strings.Join(gewinner, ", "), haben))
 		}
 	}
 
+	// remove tmp-file
 	err = os.Remove(fmt.Sprintf("results/tmp_%d.json", aktuellesGame.matchId))
 	if err != nil {
 		log.Printf("An error occured while deleting results/tmp_%d.json: %v\n", aktuellesGame.matchId, err)
 	}
 
+	// reset
 	bessereDaten = map[int][]string{}
 	config.State = Idle
 	aktuellesGame.matchId = 0
 
+	// run shell-command, e.g. to analyse the result and update a database
 	if config.CmdAfterAuswertung != "" {
 		exec.Command(config.CmdAfterAuswertung)
 	}
