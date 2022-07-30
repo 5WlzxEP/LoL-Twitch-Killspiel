@@ -52,7 +52,7 @@ jobs:
         run: docker login -u 5wlzxep -p ${{ secrets.TOKEN }}
 
       - name: docker publish
-        run: docker push 5wlzxep/killspiel:1.2.3
+        run: docker push 5wlzxep/killspiel:latest
 #
 #      # Install the cosign tool except on PR
 #      # https://github.com/sigstore/cosign-installer
